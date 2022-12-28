@@ -80,7 +80,7 @@ body {
     height: min-content;
     padding: 10px;
     border-radius: 20px;
-    width: min-content;
+    /* width: min-content; */
     background-color: antiquewhite;
 }
 
