@@ -66,6 +66,10 @@ body {
     color: rgba(255, 255, 255, 0.75);
 }
 
+.questions{
+    font-weight: bold;
+}
+
 .prompt-container {
     place-content: flex-end center;
     align-items: center;
@@ -74,11 +78,14 @@ body {
     flex-flow: column nowrap;
     gap: 16px;
     height: min-content;
-    padding: 0px;
+    padding: 10px;
+    border-radius: 20px;
     width: min-content;
+    background-color: antiquewhite;
 }
 
 .prompt-box {
+    
     border-bottom-width: 1px;
     border-color: rgba(255, 255, 255, 0.1);
     border-left-width: 1px;
@@ -127,7 +134,7 @@ textarea {
     display: flex;
     place-content: center;
     align-items: center;
-    justify-content: flex-end;
+    justify-content: center;
     flex: 0 0 auto;
     flex-flow: row nowrap;
     gap: 12px;
@@ -137,6 +144,10 @@ textarea {
     position: relative;
     width: 100%;
 }
+
+.urdu-text {
+    font-family: 'Nastaleeq', 'Jameel Noori Nastaleeq', 'Urdu Typesetting', serif;
+  }
 
 .key-stroke {
     outline: none;
