@@ -1,7 +1,7 @@
 import Head from 'next/head';
 import Image from 'next/image';
 import buildspaceLogo from '../assets/buildspace-logo.png';
-import { useState } from 'react';
+import { useState , useEffect} from 'react';
 
 const Home = () => {
 
@@ -11,12 +11,28 @@ const Home = () => {
   const [days, setDays] = useState([]);
   const [hasGym, setHasGym] = useState(false);
   const [hasGoal, setHasGoal] = useState('');
-  const [submitted, setSubmitted] = useState('');
+  const [showForm, setShowForm] = useState(true);
 
   const handleDayChange = event => {
     const { value } = event.target;
-    setDays(days => [...days, value]);
+    if (event.target.checked) {
+      setDays(days => [...days, value]);
+    } else {
+      setDays(days => days.filter(day => day !== value));
+    }
+    //console.log(days)
   };
+
+  useEffect(() => {
+    console.log(days);
+  }, [days]);
+
+  useEffect(() => {
+    if(showForm){
+      setDays(days => []);
+    }
+    
+  },[showForm]);
 
   const handleGymChange = event => {
     const { value } = event.target;
@@ -56,30 +72,34 @@ const Home = () => {
 
     setApiOutput(`${output.text}`);
     setIsGenerating(false);
+    setShowForm(false);
+    
   }
 
 
   function FormDataTable({ days, hasGym, hasGoal }) {
     return (
       <table>
-        <tr>
-          <th>Available Days</th>
-          <td>
-            {days.join(', ')}
-          </td>
-        </tr>
-        <tr>
-          <th>Gym Equipment</th>
-          <td>
-            {hasGym}
-          </td>
-        </tr>
-        <tr>
-          <th>Goal</th>
-          <td>
-            {hasGoal}
-          </td>
-        </tr>
+        <tbody>
+          <tr>
+            <th>Available Days</th>
+            <td>
+              {days.join(', ')}
+            </td>
+          </tr>
+          <tr>
+            <th>Gym Equipment</th>
+            <td>
+              {hasGym}
+            </td>
+          </tr>
+          <tr>
+            <th>Goal</th>
+            <td>
+              {hasGoal}
+            </td>
+          </tr>
+        </tbody>
       </table>
     );
   }
@@ -99,69 +119,79 @@ const Home = () => {
             <h2>Get a personalised workout plan that fits your needs.</h2>
           </div>
         </div>
-        <div className="prompt-container">
-          <form onSubmit={handleSubmit}>
-            <label>
-              
-              <p className='questions' >Select the days you are available to workout:</p>
+        {showForm &&(
+          <div className="prompt-container">
+            <form onSubmit={handleSubmit}>
+              <label>
+                
+                <p className='questions' >Select the days you are available to workout:</p>
 
-              <input type="checkbox" value="Monday" onChange={handleDayChange} /> Monday
-              <br />
-              <input type="checkbox" value="Tuesday" onChange={handleDayChange} /> Tuesday
-              <br />
-              <input type="checkbox" value="Wednesday" onChange={handleDayChange} /> Wednesday
-              <br />
-              <input type="checkbox" value="Thursday" onChange={handleDayChange} /> Thursday
-              <br />
-              <input type="checkbox" value="Friday" onChange={handleDayChange} /> Friday
-              <br />
-              <input type="checkbox" value="Saturday" onChange={handleDayChange} /> Saturday
-              <br />
-              <input type="checkbox" value="Sunday" onChange={handleDayChange} /> Sunday
-            </label>
-            <br />
-            <br />
-            <label>
-              <p className='questions'>Do you have access to Gym Equipment?</p>
-              
-              <input type="radio" name="gym" value="Gym Equipment" onChange={handleGymChange} /> Yes
-              <br />
-              <input type="radio" name="gym" value="No Gym Equipment" onChange={handleGymChange} /> No
-            </label>
-            <br />
-            <br />
-            <label>
-              <p className='questions'>Which of these is your main Fitness Goal at the moment?</p>
-      
-              <input type="radio" name="goal" value="losing weight" onChange={handleGoalChange} /> Losing weight: This is a common goal for people who are looking to shed excess body fat and improve their body composition.
+                <input type="checkbox" value="Monday" onChange={handleDayChange} /> Monday
+                <br />
+                <input type="checkbox" value="Tuesday" onChange={handleDayChange} /> Tuesday
+                <br />
+                <input type="checkbox" value="Wednesday" onChange={handleDayChange} /> Wednesday
+                <br />
+                <input type="checkbox" value="Thursday" onChange={handleDayChange} /> Thursday
+                <br />
+                <input type="checkbox" value="Friday" onChange={handleDayChange} /> Friday
+                <br />
+                <input type="checkbox" value="Saturday" onChange={handleDayChange} /> Saturday
+                <br />
+                <input type="checkbox" value="Sunday" onChange={handleDayChange} /> Sunday
+              </label>
               <br />
               <br />
-              <input type="radio" name="goal" value="building muscle" onChange={handleGoalChange} /> Building muscle: This goal is often pursued by people who want to increase their strength and improve their muscle definition.
+              <label>
+                <p className='questions'>Do you have access to Gym Equipment?</p>
+                
+                <input type="radio" name="gym" value="Gym Equipment" onChange={handleGymChange} /> Yes
+                <br />
+                <input type="radio" name="gym" value="No Gym Equipment" onChange={handleGymChange} /> No
+              </label>
               <br />
               <br />
-              <input type="radio" name="goal" value="improving cardiovascular endurance" onChange={handleGoalChange} /> Improving cardiovascular endurance: This goal involves increasing the body's ability to sustain physical activity for an extended period of time, such as running a marathon or participating in a triathlon.
+              <label>
+                <p className='questions'>Which of these is your main Fitness Goal at the moment?</p>
+        
+                <input type="radio" name="goal" value="losing weight" onChange={handleGoalChange} /> Losing weight: This is a common goal for people who are looking to shed excess body fat and improve their body composition.
+                <br />
+                <br />
+                <input type="radio" name="goal" value="building muscle" onChange={handleGoalChange} /> Building muscle: This goal is often pursued by people who want to increase their strength and improve their muscle definition.
+                <br />
+                <br />
+                <input type="radio" name="goal" value="improving cardiovascular endurance" onChange={handleGoalChange} /> Improving cardiovascular endurance: This goal involves increasing the body's ability to sustain physical activity for an extended period of time, such as running a marathon or participating in a triathlon.
 
-            </label>
-            <br />
-            <br />
-            {/* <button type="submit">Submit</button>
-            {submitted && <FormDataTable days={days} hasGym={hasGym} hasGoal={hasGoal} />} */}
-          </form>
-          
-          <div className="prompt-buttons">
-            <a
-              className={isGenerating ? 'generate-button loading' : 'generate-button'}
-              onClick={callGenerateEndpoint}
-            >
-              <div className="generate">
-              {isGenerating ? <span className="loader"></span> : <p>Generate</p>}
-              </div>
-            </a>
+              </label>
+              <br />
+              <br />
+              {/* <button type="submit">Submit</button>
+              {submitted && <FormDataTable days={days} hasGym={hasGym} hasGoal={hasGoal} />} */}
+            </form>
+            
+            <div className="prompt-buttons">
+              <a
+                className={isGenerating ? 'generate-button loading' : 'generate-button'}
+                onClick={callGenerateEndpoint}
+              >
+                <div className="generate">
+                {isGenerating ? <span className="loader"></span> : <p>Generate</p>}
+                </div>
+              </a>
+              
+            </div>
             
           </div>
-          
-        </div>
-        {apiOutput && (
+        )}
+        {!showForm && (
+          <div className="prompt-container" >
+            <FormDataTable days={days} hasGym={hasGym} hasGoal={hasGoal}/>;
+            <button onClick={() => setShowForm(true)}>Generate a New Workout Plan</button>
+          </div>
+        )}
+
+        
+        {apiOutput && !showForm && (
           <div className="output">
             <div className="output-header-container">
               <div className="output-header">
