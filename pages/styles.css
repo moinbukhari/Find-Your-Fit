@@ -315,7 +315,7 @@ textarea {
     letter-spacing: 0px;
     line-height: 1.4em;
     text-align: start;
-    color: #ffffff;
+    color: #070000;
     text-decoration: none;
     text-transform: none;
     margin: 0;
@@ -334,7 +334,7 @@ textarea {
 .output-content p {
     text-align: center;
     white-space: pre-line;
-    color: rgba(255, 255, 255, 0.5);
+    color: rgba(0, 0, 0, 1);
 }
 
 @media (min-width: 810px) and (max-width: 1199px) {
@@ -424,3 +424,4 @@ textarea {
         transform: rotate(360deg);
     }
 }
+

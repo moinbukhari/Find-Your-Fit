@@ -9,8 +9,7 @@ const openai = new OpenAIApi(configuration);
 
 const generateAction = async (req, res) => {
   // Run first prompt
-  console.log(`Generate a workout routine tailored towards ${req.body.userInput.hasGoal}. The exercises should use ${req.body.userInput.hasGym}.
-  Make sure workouts are only on ${req.body.userInput.days}. Give the number of reps and sets if appropriate. Give some tips at the end\n`)
+  console.log(`Generate a workout routine tailored towards ${req.body.userInput.hasGoal}. The exercises should use ${req.body.userInput.hasGym}.\nMake sure workouts are only on ${req.body.userInput.days}. Give the number of reps and sets if appropriate. Give some tips at the end\n`)
 
   const baseCompletion = await openai.createCompletion({
     model: 'text-davinci-003',

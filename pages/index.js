@@ -154,13 +154,13 @@ const Home = () => {
               <label>
                 <p className='questions'>Which of these is your main Fitness Goal at the moment?</p>
         
-                <input type="radio" name="goal" value="losing weight" onChange={handleGoalChange} /> Losing weight: This is a common goal for people who are looking to shed excess body fat and improve their body composition.
+                <input type="radio" name="goal" value="Losing Weight" onChange={handleGoalChange} /> Losing weight: This is a common goal for people who are looking to shed excess body fat and improve their body composition.
                 <br />
                 <br />
-                <input type="radio" name="goal" value="building muscle" onChange={handleGoalChange} /> Building muscle: This goal is often pursued by people who want to increase their strength and improve their muscle definition.
+                <input type="radio" name="goal" value="Building Muscle" onChange={handleGoalChange} /> Building muscle: This goal is often pursued by people who want to increase their strength and improve their muscle definition.
                 <br />
                 <br />
-                <input type="radio" name="goal" value="improving cardiovascular endurance" onChange={handleGoalChange} /> Improving cardiovascular endurance: This goal involves increasing the body's ability to sustain physical activity for an extended period of time, such as running a marathon or participating in a triathlon.
+                <input type="radio" name="goal" value="Improving Cardiovascular Endurance" onChange={handleGoalChange} /> Improving cardiovascular endurance: This goal involves increasing the body's ability to sustain physical activity for an extended period of time, such as running a marathon or participating in a triathlon.
 
               </label>
               <br />
@@ -183,29 +183,32 @@ const Home = () => {
             
           </div>
         )}
+        
         {!showForm && (
           <div className="prompt-container" >
-            <FormDataTable days={days} hasGym={hasGym} hasGoal={hasGoal}/>;
+            <FormDataTable days={days} hasGym={hasGym} hasGoal={hasGoal}/>
             <button onClick={() => setShowForm(true)}>Generate a New Workout Plan</button>
+
+            {apiOutput && !showForm && (
+              <div className="output">
+                <div className="output-header-container">
+                  <div className="output-header">
+                    <h3>Output</h3>
+                  </div>
+                </div>
+                <div className="output-content">
+                  <p>{apiOutput}</p>
+                </div>
+              </div>
+            )}
           </div>
         )}
 
         
-        {apiOutput && !showForm && (
-          <div className="output">
-            <div className="output-header-container">
-              <div className="output-header">
-                <h3>Output</h3>
-              </div>
-            </div>
-            <div className="output-content">
-              <p  className="urdu-text" >{apiOutput}</p>
-            </div>
-          </div>
-          )}
+        
       </div>
 
-      <div className="badge-container grow">
+      {/* <div className="badge-container grow">
         <a
           href="https://buildspace.so/builds/ai-writer"
           target="_blank"
@@ -213,10 +216,10 @@ const Home = () => {
         >
           <div className="badge">
             <Image src={buildspaceLogo} alt="buildspace logo" />
-            <p>build with buildspace</p>
+            <p>built by Moin</p>
           </div>
         </a>
-      </div>
+      </div> */}
     </div>
   );
 };
