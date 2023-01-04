@@ -10,7 +10,7 @@ body {
     display: flex;
     place-content: center flex-start;
     align-items: center;
-    background-color: rgb(0, 0, 0);
+    background-color: rgb(214 104 104);
     flex-flow: column nowrap;
     gap: 10px;
     height: 100vh;
@@ -87,7 +87,7 @@ body {
 .prompt-box {
     
     border-bottom-width: 1px;
-    border-color: rgba(255, 255, 255, 0.1);
+    border-color: rgba(7, 0, 0, 0.9);
     border-left-width: 1px;
     border-right-width: 1px;
     border-style: solid;
@@ -105,7 +105,7 @@ body {
     padding: 20px;
     position: relative;
     width: 610px;
-    max-width: 1200px;
+    /* max-width: 1200px; */
     will-change: transform;
     overflow: auto;
     outline: none;
@@ -115,7 +115,7 @@ body {
     letter-spacing: 0px;
     line-height: 1.6em;
     text-align: start;
-    color: rgba(255, 255, 255, 0.75);
+    color: rgba(0, 0, 0, 0.9);
     text-decoration: none;
     text-transform: none;
 }
@@ -126,7 +126,7 @@ textarea {
 
 
 .prompt-box:focus {
-    border-color:rgba(255, 255, 255, 0.75)
+    border-color:rgba(29, 155, 1, 0.9)
 }
 
 
@@ -349,7 +349,7 @@ textarea {
     }
 
     .prompt-box {
-        width: 100%;
+        width: 500px;
     }
 }
 
@@ -365,7 +365,7 @@ textarea {
     }
 
     .prompt-box {
-        width: 100%;
+        width: 400px;
     }
 }
 
@@ -397,7 +397,7 @@ textarea {
     }
 
     .prompt-box {
-        width: 100%;
+        width: 300px;
     }
 }
 

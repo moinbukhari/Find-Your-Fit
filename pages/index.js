@@ -12,6 +12,7 @@ const Home = () => {
   const [hasGym, setHasGym] = useState(false);
   const [hasGoal, setHasGoal] = useState('');
   const [showForm, setShowForm] = useState(true);
+  const [pref, setPref] = useState('');
 
   const handleDayChange = event => {
     const { value } = event.target;
@@ -30,6 +31,7 @@ const Home = () => {
   useEffect(() => {
     if(showForm){
       setDays(days => []);
+      setPref('');
     }
     
   },[showForm]);
@@ -44,6 +46,10 @@ const Home = () => {
     setHasGoal(value);
   };
 
+  const handleChangePref = (event) => {
+    setPref(event.target.value);
+  };
+
   const handleSubmit = event => {
     event.preventDefault();
     // Submit the form data somewhere
@@ -56,6 +62,7 @@ const Home = () => {
       days,
       hasGym,
       hasGoal,
+      pref,
     } 
     console.log("Calling OpenAI...")
     const response = await fetch('/api/generate', {
@@ -165,6 +172,14 @@ const Home = () => {
               </label>
               <br />
               <br />
+
+              <label>
+                <p className='questions'>Any other preferences?</p>
+
+                <textarea className='prompt-box' value={pref} onChange={handleChangePref} name="preferences" placeholder='e.g No treadmill workouts' />
+        
+                
+              </label>
               {/* <button type="submit">Submit</button>
               {submitted && <FormDataTable days={days} hasGym={hasGym} hasGoal={hasGoal} />} */}
             </form>
