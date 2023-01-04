@@ -114,12 +114,12 @@ const Home = () => {
   return (
     <div className="root">
       <Head>
-        <title>Find Your Fit</title>
+        <title>Find Your Fit </title>
       </Head>
       <div className="container">
         <div className="header">
           <div className="header-title">
-            <h1>Find Your Fit</h1>
+            <h1>Find Your Fit </h1>
           </div>
           <div className="header-subtitle">
             <h2>Tell us your fitness goals, preferences and weekly availability. </h2>

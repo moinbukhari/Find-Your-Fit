@@ -14,7 +14,7 @@ const generateAction = async (req, res) => {
   const baseCompletion = await openai.createCompletion({
     model: 'text-davinci-003',
     prompt: 
-    `Generate a workout routine tailored towards ${req.body.userInput.hasGoal}. The exercises should use ${req.body.userInput.hasGym}.\nMake sure workouts are only on ${req.body.userInput.days}.\n${req.body.userInput.pref}\nGive the number of reps and sets if appropriate.`,
+    `Generate a workout routine tailored towards ${req.body.userInput.hasGoal}. The exercises should use ${req.body.userInput.hasGym}.\nMake sure workouts are only on ${req.body.userInput.days}.\n${req.body.userInput.pref}\nGive the number of reps and sets if appropriate.\nSplit each day with a line of *********************`,
     temperature: 0.7,
     max_tokens: 500,
   });
