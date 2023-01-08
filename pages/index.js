@@ -6,6 +6,7 @@ import { useState , useEffect} from 'react';
 const Home = () => {
 
 
+
   const [apiOutput, setApiOutput] = useState('')
   const [isGenerating, setIsGenerating] = useState(false)
   const [days, setDays] = useState([]);
@@ -110,12 +111,21 @@ const Home = () => {
       </table>
     );
   }
+
+  function Analytics() {
+    const html = '<!-- Google tag (gtag.js) -->\n<script async src="https://www.googletagmanager.com/gtag/js?id=G-B0HWBQ2TZD"></script>\n<script>\n  window.dataLayer = window.dataLayer || [];\n  function gtag(){dataLayer.push(arguments);}\n  gtag(\'js\', new Date());\n\n  gtag(\'config\', \'G-B0HWBQ2TZD\');\n</script>';
+  
+    return <div dangerouslySetInnerHTML={{ __html: html }} />;
+  }
   
   return (
     <div className="root">
       <Head>
         <title>Find Your Fit </title>
       </Head>
+      <Analytics />
+
+
       <div className="container">
         <div className="header">
           <div className="header-title">
