@@ -80,6 +80,10 @@ const Home = () => {
 
     setApiOutput(`${output.text}`);
     setIsGenerating(false);
+    gtag('event', 'click', {
+      event_category: 'Button',
+      event_label: 'Generate Workout'
+    });
     setShowForm(false);
     
   }
