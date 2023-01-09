@@ -2,6 +2,7 @@ import Head from 'next/head';
 import Image from 'next/image';
 import buildspaceLogo from '../assets/buildspace-logo.png';
 import { useState , useEffect} from 'react';
+import {Remarkable} from 'remarkable';
 
 const Home = () => {
 
@@ -56,6 +57,52 @@ const Home = () => {
     // Submit the form data somewhere
     setSubmitted(true);
   };
+
+  
+
+  const Markdown = ({ content }) => {
+    const md = new Remarkable()
+    const [value, setValue] = useState(content)
+    const [editing, setEditing] = useState(false)
+    const [html, setHtml] = useState(md.render(content))
+
+    const handleChange = (event) => {
+      setValue(event.target.value)
+      setHtml(md.render(event.target.value))
+    }
+
+    const handleKeyDown = (event) => {
+      if (event.key === 'Enter') {
+        setValue(event.target.value)
+        setEditing(false)
+      }
+    }
+
+    const handleBlur = () => {
+      setEditing(false)
+    }
+
+    if (editing) {
+      return (
+        <div>
+          <textarea
+            value={value}
+            onChange={handleChange}
+            onKeyDown={handleKeyDown}
+            onBlur={handleBlur}
+            className='prompt-box'
+          />
+        </div>
+      )
+    }
+
+    
+    // const html = md.render(content)
+    return (<div>
+              <div dangerouslySetInnerHTML={{ __html: html }} />
+              <button onClick={() => setEditing(true)}>Edit</button>
+            </div>)
+  }
 
   const callGenerateEndpoint = async () => {
     setIsGenerating(true);
@@ -146,7 +193,6 @@ const Home = () => {
               <label>
                 
                 <p className='questions' >Select the days you are available to workout:</p>
-
                 <input type="checkbox" value="Monday" onChange={handleDayChange} /> Monday
                 <br />
                 <input type="checkbox" value="Tuesday" onChange={handleDayChange} /> Tuesday
@@ -209,6 +255,7 @@ const Home = () => {
               </a>
               
             </div>
+      
             
           </div>
         )}
@@ -222,15 +269,16 @@ const Home = () => {
               <div className="output">
                 <div className="output-header-container">
                   <div className="output-header">
-                    <h3>Output</h3>
+                    <h3>Workout Plan</h3>
                   </div>
                 </div>
                 <div className="output-content">
-                  <p>{apiOutput}</p>
+                  <Markdown content={apiOutput} />
                 </div>
               </div>
             )}
           </div>
+          
         )}
 
         
