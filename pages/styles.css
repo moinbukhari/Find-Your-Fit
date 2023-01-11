@@ -120,6 +120,27 @@ body {
     text-transform: none;
 }
 
+.text-box {
+    width: 500px;
+    min-height: 300px;
+    margin-top: 10px;
+    padding: 10px;
+    font-size: 16px;
+    font-family: Arial, sans-serif;
+    color: #555;
+    border: 1px solid #ddd;
+    border-radius: 3px;
+    box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    transition: all 0.3s ease-out;
+    resize: vertical;
+}
+.text-box{
+    border-color: #3498db;
+    box-shadow: 0 0 5px #3498db;
+}
+
 textarea {
     font-family: 'Manrope', sans-serif;
 }
@@ -181,6 +202,7 @@ textarea {
 }
 
 .generate-button {
+    margin: 10px;
     place-content: flex-start;
     align-items: flex-start;
     background-color: rgb(255, 79, 18);
@@ -334,10 +356,12 @@ textarea {
 .output-content p {
     text-align: center;
     white-space: pre-line;
-    color: rgba(0, 0, 0, 1);
+    color: rgb(69, 48, 48);
 }
 
-@media (min-width: 810px) and (max-width: 1199px) {
+
+
+@media (min-width: 810px) {
     .container {
         max-width: 600px;
         width: 100%;
@@ -397,6 +421,10 @@ textarea {
     }
 
     .prompt-box {
+        width: 300px;
+    }
+
+    .text-box{
         width: 300px;
     }
 }

@@ -8,13 +8,17 @@ const Home = () => {
 
 
 
-  const [apiOutput, setApiOutput] = useState('')
-  const [isGenerating, setIsGenerating] = useState(false)
+  const [apiOutput, setApiOutput] = useState('');
+  const [isGenerating, setIsGenerating] = useState(false);
   const [days, setDays] = useState([]);
   const [hasGym, setHasGym] = useState(false);
   const [hasGoal, setHasGoal] = useState('');
   const [showForm, setShowForm] = useState(true);
   const [pref, setPref] = useState('');
+  const [comment, setComment] = useState('');
+
+  
+  const [showTextArea, setShowTextArea] = useState(false)
 
   const handleDayChange = event => {
     const { value } = event.target;
@@ -57,7 +61,21 @@ const Home = () => {
     // Submit the form data somewhere
     setSubmitted(true);
   };
+  
+  const handleButtonClick = () => {
+    if(showTextArea){
+      setShowTextArea(false)
+    }
+    else{
+      setShowTextArea(true)
+    }
+    
+  }
 
+  const handleTextAreaChange = event => {
+    setComment(event.target.value)
+  }
+  
   
 
   const Markdown = ({ content }) => {
@@ -68,31 +86,32 @@ const Home = () => {
 
     const handleChange = (event) => {
       setValue(event.target.value)
+      
       setHtml(md.render(event.target.value))
     }
 
     const handleKeyDown = (event) => {
       if (event.key === 'Enter') {
         setValue(event.target.value)
+        setApiOutput(value)
         setEditing(false)
       }
     }
 
     const handleBlur = () => {
+      setApiOutput(value)
       setEditing(false)
     }
 
     if (editing) {
       return (
-        <div>
           <textarea
             value={value}
             onChange={handleChange}
             onKeyDown={handleKeyDown}
             onBlur={handleBlur}
-            className='prompt-box'
+            className='text-box'
           />
-        </div>
       )
     }
 
@@ -100,9 +119,33 @@ const Home = () => {
     // const html = md.render(content)
     return (<div>
               <div dangerouslySetInnerHTML={{ __html: html }} />
-              <button onClick={() => setEditing(true)}>Edit</button>
+              <button onClick={() => setEditing(true)}>Edit Workout in Markdown</button>
             </div>)
   }
+
+  const improveWorkout = async () => {
+    setIsGenerating(true);
+
+    console.log("Calling OpenAI...")
+    const response = await fetch('/api/regenerate', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ userInput: comment, prevContent: apiOutput}),
+    });
+
+    const data = await response.json();
+    const { output } = data;
+    console.log("OpenAI replied...", output.text)
+
+    setApiOutput(`${output.text}`);
+    setIsGenerating(false);
+    setShowTextArea(false);
+    setComment("");
+
+  }
+
 
   const callGenerateEndpoint = async () => {
     setIsGenerating(true);
@@ -132,28 +175,36 @@ const Home = () => {
       event_label: 'Generate Workout'
     });
     setShowForm(false);
+    setShowTextArea(false);
     
   }
 
 
-  function FormDataTable({ days, hasGym, hasGoal }) {
+  function FormDataTable({ days, gym, hasGoal }) {
+    if(gym=="Gym Equipment"){
+      gym="Yes"
+    }
+    else{
+      gym="No"
+    }
+
     return (
       <table>
         <tbody>
           <tr>
-            <th>Available Days</th>
+            <th>Available Days:</th>
             <td>
               {days.join(', ')}
             </td>
           </tr>
           <tr>
-            <th>Gym Equipment</th>
+            <th>Gym Equipment:</th>
             <td>
-              {hasGym}
+              {gym}
             </td>
           </tr>
           <tr>
-            <th>Goal</th>
+            <th>Goal:</th>
             <td>
               {hasGoal}
             </td>
@@ -271,10 +322,29 @@ const Home = () => {
                   <div className="output-header">
                     <h3>Workout Plan</h3>
                   </div>
-                </div>
-                <div className="output-content">
+                </div>    
                   <Markdown content={apiOutput} />
-                </div>
+                  <button onClick={handleButtonClick}>Suggest Improvements</button>
+                {showTextArea && (
+                  <div>
+                    <textarea className='prompt-box' value={comment} onChange={handleTextAreaChange} placeholder='e.g Maximum 5 exercises each day'/>
+                    <div className="prompt-buttons">
+                      <a
+                        className={isGenerating ? 'generate-button loading' : 'generate-button'}
+                        onClick={improveWorkout}
+                      >
+                        <div className="generate">
+                        {isGenerating ? <span className="loader"></span> : <p>Regenerate</p>}
+                        </div>
+                      </a>
+                      
+                    </div>
+                  </div>
+                )}
+                
+
+                
+                
               </div>
             )}
           </div>
