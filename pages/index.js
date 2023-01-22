@@ -1,374 +1,123 @@
-import Head from 'next/head';
-import Image from 'next/image';
-import buildspaceLogo from '../assets/buildspace-logo.png';
-import { useState , useEffect} from 'react';
-import {Remarkable} from 'remarkable';
+import { useState } from 'react'
+// import { Dialog } from '@headlessui/react'
+// import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline'
 
-const Home = () => {
+import NavBar from './navbar';
+const navigation = [
+  { name: 'Product', href: '#' },
+  { name: 'Features', href: '#' },
+  { name: 'Marketplace', href: '#' },
+  { name: 'Company', href: '#' },
+]
 
+export default function Example() {
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
-
-  const [apiOutput, setApiOutput] = useState('');
-  const [isGenerating, setIsGenerating] = useState(false);
-  const [days, setDays] = useState([]);
-  const [hasGym, setHasGym] = useState(false);
-  const [hasGoal, setHasGoal] = useState('');
-  const [showForm, setShowForm] = useState(true);
-  const [pref, setPref] = useState('');
-  const [comment, setComment] = useState('');
-
-  
-  const [showTextArea, setShowTextArea] = useState(false)
-
-  const handleDayChange = event => {
-    const { value } = event.target;
-    if (event.target.checked) {
-      setDays(days => [...days, value]);
-    } else {
-      setDays(days => days.filter(day => day !== value));
-    }
-    //console.log(days)
-  };
-
-  useEffect(() => {
-    console.log(days);
-  }, [days]);
-
-  useEffect(() => {
-    if(showForm){
-      setDays(days => []);
-      setPref('');
-    }
-    
-  },[showForm]);
-
-  const handleGymChange = event => {
-    const { value } = event.target;
-    setHasGym(value);
-  };
-
-  const handleGoalChange = event => {
-    const { value } = event.target;
-    setHasGoal(value);
-  };
-
-  const handleChangePref = (event) => {
-    setPref(event.target.value);
-  };
-
-  const handleSubmit = event => {
-    event.preventDefault();
-    // Submit the form data somewhere
-    setSubmitted(true);
-  };
-  
-  const handleButtonClick = () => {
-    if(showTextArea){
-      setShowTextArea(false)
-    }
-    else{
-      setShowTextArea(true)
-    }
-    
-  }
-
-  const handleTextAreaChange = event => {
-    setComment(event.target.value)
-  }
-  
-  
-
-  const Markdown = ({ content }) => {
-    const md = new Remarkable()
-    const [value, setValue] = useState(content)
-    const [editing, setEditing] = useState(false)
-    const [html, setHtml] = useState(md.render(content))
-
-    const handleChange = (event) => {
-      setValue(event.target.value)
-      
-      setHtml(md.render(event.target.value))
-    }
-
-    const handleKeyDown = (event) => {
-      if (event.key === 'Enter') {
-        setValue(event.target.value)
-        setApiOutput(value)
-        setEditing(false)
-      }
-    }
-
-    const handleBlur = () => {
-      setApiOutput(value)
-      setEditing(false)
-    }
-
-    if (editing) {
-      return (
-          <textarea
-            value={value}
-            onChange={handleChange}
-            onKeyDown={handleKeyDown}
-            onBlur={handleBlur}
-            className='text-box'
-          />
-      )
-    }
-
-    
-    // const html = md.render(content)
-    return (<div>
-              <div dangerouslySetInnerHTML={{ __html: html }} />
-              <button onClick={() => setEditing(true)}>Edit Workout in Markdown</button>
-            </div>)
-  }
-
-  const improveWorkout = async () => {
-    setIsGenerating(true);
-
-    console.log("Calling OpenAI...")
-    const response = await fetch('/api/regenerate', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ userInput: comment, prevContent: apiOutput}),
-    });
-
-    const data = await response.json();
-    const { output } = data;
-    console.log("OpenAI replied...", output.text)
-
-    setApiOutput(`${output.text}`);
-    setIsGenerating(false);
-    setShowTextArea(false);
-    setComment("");
-
-  }
-
-
-  const callGenerateEndpoint = async () => {
-    setIsGenerating(true);
-    const formData = {
-      days,
-      hasGym,
-      hasGoal,
-      pref,
-    } 
-    console.log("Calling OpenAI...")
-    const response = await fetch('/api/generate', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ userInput: formData }),
-    });
-
-    const data = await response.json();
-    const { output } = data;
-    console.log("OpenAI replied...", output.text)
-
-    setApiOutput(`${output.text}`);
-    setIsGenerating(false);
-    gtag('event', 'click', {
-      event_category: 'Button',
-      event_label: 'Generate Workout'
-    });
-    setShowForm(false);
-    setShowTextArea(false);
-    
-  }
-
-
-  function FormDataTable({ days, gym, hasGoal }) {
-    if(gym=="Gym Equipment"){
-      gym="Yes"
-    }
-    else{
-      gym="No"
-    }
-
-    return (
-      <table>
-        <tbody>
-          <tr>
-            <th>Available Days:</th>
-            <td>
-              {days.join(', ')}
-            </td>
-          </tr>
-          <tr>
-            <th>Gym Equipment:</th>
-            <td>
-              {gym}
-            </td>
-          </tr>
-          <tr>
-            <th>Goal:</th>
-            <td>
-              {hasGoal}
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    );
-  }
-
-  function Analytics() {
-    const html = '<!-- Google tag (gtag.js) -->\n<script async src="https://www.googletagmanager.com/gtag/js?id=G-B0HWBQ2TZD"></script>\n<script>\n  window.dataLayer = window.dataLayer || [];\n  function gtag(){dataLayer.push(arguments);}\n  gtag(\'js\', new Date());\n\n  gtag(\'config\', \'G-B0HWBQ2TZD\');\n</script>';
-  
-    return <div dangerouslySetInnerHTML={{ __html: html }} />;
-  }
-  
   return (
-    <div className="root">
-      <Head>
-        <title>Find Your Fit </title>
-      </Head>
-      <Analytics />
-
-
-      <div className="container">
-        <div className="header">
-          <div className="header-title">
-            <h1>Find Your Fit </h1>
-          </div>
-          <div className="header-subtitle">
-            <h2>Tell us your fitness goals, preferences and weekly availability. </h2>
-            <h2>Get a personalised workout plan that fits your needs.</h2>
+    <div className="isolate bg-rose-100 h-auto ">
+      <div className="absolute inset-x-0 top-[-10rem] -z-10 transform-gpu overflow-hidden blur-3xl sm:top-[-20rem]">
+        <svg
+          className="relative left-[calc(50%-11rem)] -z-10 h-[21.1875rem] max-w-none -translate-x-1/2 rotate-[30deg] sm:left-[calc(50%-30rem)] sm:h-[42.375rem]"
+          viewBox="0 0 1155 678"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            fill="url(#45de2b6b-92d5-4d68-a6a0-9b9b2abad533)"
+            fillOpacity=".3"
+            d="M317.219 518.975L203.852 678 0 438.341l317.219 80.634 204.172-286.402c1.307 132.337 45.083 346.658 209.733 145.248C936.936 126.058 882.053-94.234 1031.02 41.331c119.18 108.451 130.68 295.337 121.53 375.223L855 299l21.173 362.054-558.954-142.079z"
+          />
+          <defs>
+            <linearGradient
+              id="45de2b6b-92d5-4d68-a6a0-9b9b2abad533"
+              x1="1155.49"
+              x2="-78.208"
+              y1=".177"
+              y2="474.645"
+              gradientUnits="userSpaceOnUse"
+            >
+              <stop stopColor="#9089FC" />
+              <stop offset={1} stopColor="#FF80B5" />
+            </linearGradient>
+          </defs>
+        </svg>
+      </div>
+      <NavBar></NavBar>
+      <main >
+        <div className="relative px-6 lg:px-8">
+          <div className="mx-auto max-w-3xl pt-20 pb-32 sm:pt-48 sm:pb-40">
+            <div>
+              {/* <div className="hidden sm:mb-8 sm:flex sm:justify-center">
+                <div className="relative overflow-hidden rounded-full py-1.5 px-4 text-sm leading-6 ring-1 ring-gray-900/10 hover:ring-gray-900/20">
+                  <span className="text-gray-600">
+                    Announcing our next round of funding.{' '}
+                    <a href="#" className="font-semibold text-indigo-600">
+                      <span className="absolute inset-0" aria-hidden="true" />
+                      Read more <span aria-hidden="true">&rarr;</span>
+                    </a>
+                  </span>
+                </div>
+              </div> */}
+              <div>
+                <h1 className="text-4xl font-bold tracking-tight sm:text-center sm:text-6xl mb-3">
+                Get your ideal workout plan in under a minute
+                </h1>
+                <p className="mt-7 text-2xl leading-8 text-gray-600 sm:text-center">
+                Tell us your fitness goals, preferences and weekly availability.
+                </p>
+                <p className=' text-2xl leading-8 text-gray-600 sm:text-center'>Get a personalised plan that fits your needs.</p>
+                <div className="mt-8 flex gap-x-4 sm:justify-center">
+                  <a
+                    href="/gen"
+                    className="inline-block rounded-lg bg-rose-600 px-4 py-1.5 text-base font-semibold leading-7 text-white shadow-sm ring-1 ring-rose-600 hover:bg-rose-700 hover:ring-rose-700"
+                  >
+                    Generate Workout{' '}
+                    <span className="text-rose-200" aria-hidden="true">
+                      &rarr;
+                    </span>
+                  </a>
+                  {/* <a
+                    href="#"
+                    className="inline-block rounded-lg px-4 py-1.5 text-base font-semibold leading-7 text-gray-900 ring-1 ring-gray-900/10 hover:ring-gray-900/20"
+                  >
+                    Live demo{' '}
+                    <span className="text-gray-400" aria-hidden="true">
+                      &rarr;
+                    </span>
+                  </a> */}
+                </div>
+              </div>
+              <div className="absolute bg-rose-100 inset-x-0 top-[calc(100%-13rem)] -z-10 transform-gpu overflow-hidden blur-3xl sm:top-[calc(100%-30rem)]">
+                <svg
+                  className="relative left-[calc(50%+3rem)] h-[21.1875rem] max-w-none -translate-x-1/2 sm:left-[calc(50%+36rem)] sm:h-[42.375rem]"
+                  viewBox="0 0 1155 678"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    fill="url(#ecb5b0c9-546c-4772-8c71-4d3f06d544bc)"
+                    fillOpacity=".3"
+                    d="M317.219 518.975L203.852 678 0 438.341l317.219 80.634 204.172-286.402c1.307 132.337 45.083 346.658 209.733 145.248C936.936 126.058 882.053-94.234 1031.02 41.331c119.18 108.451 130.68 295.337 121.53 375.223L855 299l21.173 362.054-558.954-142.079z"
+                  />
+                  <defs>
+                    <linearGradient
+                      id="ecb5b0c9-546c-4772-8c71-4d3f06d544bc"
+                      x1="1155.49"
+                      x2="-78.208"
+                      y1=".177"
+                      y2="474.645"
+                      gradientUnits="userSpaceOnUse"
+                    >
+                      <stop stopColor="#9089FC" />
+                      <stop offset={1} stopColor="#FF80B5" />
+                    </linearGradient>
+                  </defs>
+                </svg>
+              </div>
+            </div>
           </div>
         </div>
-        {showForm &&(
-          <div className="prompt-container">
-            <form onSubmit={handleSubmit}>
-              <label>
-                
-                <p className='questions' >Select the days you are available to workout:</p>
-                <input type="checkbox" value="Monday" onChange={handleDayChange} /> Monday
-                <br />
-                <input type="checkbox" value="Tuesday" onChange={handleDayChange} /> Tuesday
-                <br />
-                <input type="checkbox" value="Wednesday" onChange={handleDayChange} /> Wednesday
-                <br />
-                <input type="checkbox" value="Thursday" onChange={handleDayChange} /> Thursday
-                <br />
-                <input type="checkbox" value="Friday" onChange={handleDayChange} /> Friday
-                <br />
-                <input type="checkbox" value="Saturday" onChange={handleDayChange} /> Saturday
-                <br />
-                <input type="checkbox" value="Sunday" onChange={handleDayChange} /> Sunday
-              </label>
-              <br />
-              <br />
-              <label>
-                <p className='questions'>Do you have access to Gym Equipment?</p>
-                
-                <input type="radio" name="gym" value="Gym Equipment" onChange={handleGymChange} /> Yes
-                <br />
-                <input type="radio" name="gym" value="No Gym Equipment" onChange={handleGymChange} /> No
-              </label>
-              <br />
-              <br />
-              <label>
-                <p className='questions'>Which of these is your main Fitness Goal at the moment?</p>
-        
-                <input type="radio" name="goal" value="Losing Weight" onChange={handleGoalChange} /> Losing weight: This is a common goal for people who are looking to shed excess body fat and improve their body composition.
-                <br />
-                <br />
-                <input type="radio" name="goal" value="Building Muscle" onChange={handleGoalChange} /> Building muscle: This goal is often pursued by people who want to increase their strength and improve their muscle definition.
-                <br />
-                <br />
-                <input type="radio" name="goal" value="Improving Cardiovascular Endurance" onChange={handleGoalChange} /> Improving cardiovascular endurance: This goal involves increasing the body's ability to sustain physical activity for an extended period of time, such as running a marathon or participating in a triathlon.
-
-              </label>
-              <br />
-              <br />
-
-              <label>
-                <p className='questions'>Any other preferences?</p>
-
-                <textarea className='prompt-box' value={pref} onChange={handleChangePref} name="preferences" placeholder='e.g No treadmill workouts' />
-        
-                
-              </label>
-              {/* <button type="submit">Submit</button>
-              {submitted && <FormDataTable days={days} hasGym={hasGym} hasGoal={hasGoal} />} */}
-            </form>
-            
-            <div className="prompt-buttons">
-              <a
-                className={isGenerating ? 'generate-button loading' : 'generate-button'}
-                onClick={callGenerateEndpoint}
-              >
-                <div className="generate">
-                {isGenerating ? <span className="loader"></span> : <p>Generate</p>}
-                </div>
-              </a>
-              
-            </div>
-      
-            
-          </div>
-        )}
-        
-        {!showForm && (
-          <div className="prompt-container" >
-            <FormDataTable days={days} hasGym={hasGym} hasGoal={hasGoal}/>
-            <button onClick={() => setShowForm(true)}>Generate a New Workout Plan</button>
-
-            {apiOutput && !showForm && (
-              <div className="output">
-                <div className="output-header-container">
-                  <div className="output-header">
-                    <h3>Workout Plan</h3>
-                  </div>
-                </div>    
-                  <Markdown content={apiOutput} />
-                  <button onClick={handleButtonClick}>Suggest Improvements</button>
-                {showTextArea && (
-                  <div>
-                    <textarea className='prompt-box' value={comment} onChange={handleTextAreaChange} placeholder='e.g Maximum 5 exercises each day'/>
-                    <div className="prompt-buttons">
-                      <a
-                        className={isGenerating ? 'generate-button loading' : 'generate-button'}
-                        onClick={improveWorkout}
-                      >
-                        <div className="generate">
-                        {isGenerating ? <span className="loader"></span> : <p>Regenerate</p>}
-                        </div>
-                      </a>
-                      
-                    </div>
-                  </div>
-                )}
-                
-
-                
-                
-              </div>
-            )}
-          </div>
-          
-        )}
-
-        
-        
-      </div>
-
-      {/* <div className="badge-container grow">
-        <a
-          href="https://buildspace.so/builds/ai-writer"
-          target="_blank"
-          rel="noreferrer"
-        >
-          <div className="badge">
-            <Image src={buildspaceLogo} alt="buildspace logo" />
-            <p>built by Moin</p>
-          </div>
-        </a>
-      </div> */}
+      </main>
     </div>
-  );
-};
-
-export default Home;
+  )
+}
