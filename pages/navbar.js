@@ -11,7 +11,7 @@ const NavBar = () => {
                 <div className="flex lg:min-w-0 lg:flex-1" aria-label="Global">
                 <a href="/" className="flex -m-1.5 p-1.5 text-center ">
                     
-                    <Image className="h-10 w-10 rounded-full mr-1" src={appLogo} alt="" />
+                    <Image className="h-12 w-12 rounded-full mr-1" src={appLogo} alt="" />
                     <span className="font-mono tracking-tighter font-bold text-lg flex items-center text-left ">Find Your Fit</span>
                 </a>
                 </div>

@@ -1,6 +1,15 @@
 import Head from "next/head";
 import Image from "next/image";
 import appLogo from "../assets/logo1.png";
+import mon from "../assets/Mon.png";
+import tue from "../assets/Tue.png";
+import wed from "../assets/Wed.png";
+import thu from "../assets/Thu.png";
+import fri from "../assets/Fri.png";
+import sat from "../assets/Sat.png";
+import sun from "../assets/Sun.png";
+import download from "downloadjs";
+
 import { useState, useEffect } from "react";
 import { Remarkable } from "remarkable";
 import NavBar from "./navbar";
@@ -78,13 +87,17 @@ const Gen = () => {
   const Markdown = ({ content }) => {
     const md = new Remarkable();
     const [value, setValue] = useState(content);
-    
+
     const [html, setHtml] = useState(md.render(content));
 
     const handleChange = (event) => {
       setValue(event.target.value);
 
       setHtml(md.render(event.target.value));
+    };
+    const handleDownload = () => {
+      // create a text file with the markdown content
+      download(content, "workout_plan.txt", "text/plain");
     };
 
     const handleKeyDown = (event) => {
@@ -103,7 +116,9 @@ const Gen = () => {
     if (editing) {
       return (
         <div className="flex flex-col mb-4 w-full items-center">
-          <h3 className="text-center text-lg font-normal tracking-tight">editing workout...</h3>
+          <h3 className="text-center text-lg font-normal tracking-tight">
+            editing workout...
+          </h3>
           <textarea
             value={value}
             onChange={handleChange}
@@ -125,12 +140,20 @@ const Gen = () => {
     return (
       <div className="prose flex flex-col gap-4 pb-4 items-center">
         <div dangerouslySetInnerHTML={{ __html: html }} />
-        <button
-          className="inline-block rounded-lg bg-gray-400 px-4 py-1.5 text-base font-semibold leading-7 text-white shadow-sm ring-1 ring-gray-500 hover:bg-gray-500 hover:ring-gray-500 w-fit" 
-          onClick={() => setEditing(true)}
-        >
-          Edit Workout in Markdown
-        </button>
+        <div className="flex flex-row gap-4">
+          <button
+            className="inline-block rounded-lg bg-gray-400 px-4 py-1.5 text-base font-semibold leading-7 text-white shadow-sm ring-1 ring-gray-500 hover:bg-gray-500 hover:ring-gray-500 w-fit"
+            onClick={() => setEditing(true)}
+          >
+            Edit Workout
+          </button>
+          <button
+            className="inline-block rounded-lg bg-gray-400 px-4 py-1.5 text-base font-semibold leading-7 text-white shadow-sm ring-1 ring-gray-500 hover:bg-gray-500 hover:ring-gray-500 w-fit"
+            onClick={handleDownload}
+          >
+            Download as .txt
+          </button>
+        </div>
       </div>
     );
   };
@@ -258,15 +281,15 @@ const Gen = () => {
           </div> px-5 mt-5
         </div> */}
         {showForm && (
-          <div className="px-2 md:px-10 lg:px-16 sm:py-4 md:py-4 flex items-center justify-center flex-col w-full gap-6 text-center">
+          <div className="p-8 flex items-center justify-center flex-col w-full gap-6 text-center">
             <form
               className="flex flex-col gap-8 mb-4 lg:w-4/6  md:w-5/6 sm:w-5/6
             rounded-lg bg-white shadow-md ring ring-transparent hover:ring-rose-300 p-5
             "
             >
-              <h3 className="text-3xl font-bold tracking-tight sm:text-center sm:text-4xl mb-3">
-                Answer the few questions below and have your Workout Plan
-                generated in seconds
+              <h3 className="md:text-2xl sm:text-xl font-bold tracking-tight sm:text-center  mb-3">
+                Answer the few questions below and have your workout plan
+                generated in minutes
               </h3>
               {currentStep == 1 && (
                 <div className="flex flex-col flex-wrap gap-8 items-center">
@@ -274,7 +297,7 @@ const Gen = () => {
                     Select the days you are available to workout:
                   </h3>
                   <ul className="flex flex-wrap gap-4 justify-center">
-                    <label className="cursor-pointer relative shadow-md">
+                    <label className="cursor-pointer relative ">
                       <input
                         type="checkbox"
                         value="Monday"
@@ -284,16 +307,16 @@ const Gen = () => {
                       />
                       <div className="overflow-hidden rounded-lg bg-white shadow-md ring ring-transparent grayscale transition-all active:scale-95 peer-checked:ring-rose-400 peer-checked:grayscale-0">
                         <div>
-                          <Image className="h-28 w-48 " src={appLogo} alt="" />
+                          <Image className="day-card" src={mon} alt="" />
                         </div>
-                        <header className="px-2.5 py-2.5">
+                        {/* <header className="px-2.5 py-2.5">
                           <p className="text-lg font-bold tracking-wide text-gray-700">
                             Monday
                           </p>
-                        </header>
+                        </header> */}
                       </div>
                     </label>
-                    <label className="cursor-pointer relative shadow-md">
+                    <label className="cursor-pointer relative">
                       <input
                         type="checkbox"
                         value="Tuesday"
@@ -303,16 +326,11 @@ const Gen = () => {
                       />
                       <div className="overflow-hidden rounded-lg bg-white shadow-md ring ring-transparent grayscale transition-all active:scale-95 peer-checked:ring-rose-400 peer-checked:grayscale-0">
                         <div>
-                          <Image className="h-28 w-48 " src={appLogo} alt="" />
+                          <Image className="day-card " src={tue} alt="" />
                         </div>
-                        <header className="px-2.5 py-2.5">
-                          <p className="text-lg font-bold tracking-wide text-gray-700">
-                            Tuesday
-                          </p>
-                        </header>
                       </div>
                     </label>
-                    <label className="cursor-pointer relative shadow-md">
+                    <label className="cursor-pointer relative">
                       <input
                         type="checkbox"
                         value="Wednesday"
@@ -322,16 +340,16 @@ const Gen = () => {
                       />
                       <div className="overflow-hidden rounded-lg bg-white shadow-md ring ring-transparent grayscale transition-all active:scale-95 peer-checked:ring-rose-400 peer-checked:grayscale-0">
                         <div>
-                          <Image className="h-28 w-48 " src={appLogo} alt="" />
+                          <Image className="day-card " src={wed} alt="" />
                         </div>
-                        <header className="px-2.5 py-2.5">
+                        {/* <header className="px-2.5 py-2.5">
                           <p className="text-lg font-bold tracking-wide text-gray-700">
                             Wednesday
                           </p>
-                        </header>
+                        </header> */}
                       </div>
                     </label>
-                    <label className="cursor-pointer relative shadow-md">
+                    <label className="cursor-pointer relative">
                       <input
                         type="checkbox"
                         value="Thursday"
@@ -341,16 +359,16 @@ const Gen = () => {
                       />
                       <div className="overflow-hidden rounded-lg bg-white shadow-md ring ring-transparent grayscale transition-all active:scale-95 peer-checked:ring-rose-400 peer-checked:grayscale-0">
                         <div>
-                          <Image className="h-28 w-48 " src={appLogo} alt="" />
+                          <Image className="day-card " src={thu} alt="" />
                         </div>
-                        <header className="px-2.5 py-2.5">
+                        {/* <header className="px-2.5 py-2.5">
                           <p className="text-lg font-bold tracking-wide text-gray-700">
                             Thursday
                           </p>
-                        </header>
+                        </header> */}
                       </div>
                     </label>
-                    <label className="cursor-pointer relative shadow-md">
+                    <label className="cursor-pointer relative">
                       <input
                         type="checkbox"
                         value="Friday"
@@ -360,16 +378,16 @@ const Gen = () => {
                       />
                       <div className="overflow-hidden rounded-lg bg-white shadow-md ring ring-transparent grayscale transition-all active:scale-95 peer-checked:ring-rose-400 peer-checked:grayscale-0">
                         <div>
-                          <Image className="h-28 w-48 " src={appLogo} alt="" />
+                          <Image className="day-card " src={fri} alt="" />
                         </div>
-                        <header className="px-2.5 py-2.5">
+                        {/* <header className="px-2.5 py-2.5">
                           <p className="text-lg font-bold tracking-wide text-gray-700">
                             Friday
                           </p>
-                        </header>
+                        </header> */}
                       </div>
                     </label>
-                    <label className="cursor-pointer relative shadow-md">
+                    <label className="cursor-pointer relative">
                       <input
                         type="checkbox"
                         value="Saturday"
@@ -379,16 +397,16 @@ const Gen = () => {
                       />
                       <div className="overflow-hidden rounded-lg bg-white shadow-md ring ring-transparent grayscale transition-all active:scale-95 peer-checked:ring-rose-400 peer-checked:grayscale-0">
                         <div>
-                          <Image className="h-28 w-48 " src={appLogo} alt="" />
+                          <Image className="day-card" src={sat} alt="" />
                         </div>
-                        <header className="px-2.5 py-2.5">
+                        {/* <header className="px-2.5 py-2.5">
                           <p className="text-lg font-bold tracking-wide text-gray-700">
                             Saturday
                           </p>
-                        </header>
+                        </header> */}
                       </div>
                     </label>
-                    <label className="cursor-pointer relative shadow-md">
+                    <label className="cursor-pointer relative">
                       <input
                         type="checkbox"
                         value="Sunday"
@@ -398,13 +416,13 @@ const Gen = () => {
                       />
                       <div className="overflow-hidden rounded-lg bg-white shadow-md ring ring-transparent grayscale transition-all active:scale-95 peer-checked:ring-rose-400 peer-checked:grayscale-0">
                         <div>
-                          <Image className="h-28 w-48 " src={appLogo} alt="" />
+                          <Image className="day-card " src={sun} alt="" />
                         </div>
-                        <header className="px-2.5 py-2.5">
+                        {/* <header className="px-2.5 py-2.5">
                           <p className="text-lg font-bold tracking-wide text-gray-700">
                             Sunday
                           </p>
-                        </header>
+                        </header> */}
                       </div>
                     </label>
                   </ul>
@@ -479,13 +497,20 @@ const Gen = () => {
                         onChange={handleGoalChange}
                         checked={hasGoal === "Losing Weight"}
                       />
+                      {/* <div className="overflow-hidden rounded-lg bg-white shadow-md ring ring-transparent grayscale transition-all active:scale-95 peer-checked:ring-rose-400 peer-checked:grayscale-0">
+                        <div>
+                          <Image className="day-card " src={lose} alt="" />
+                        </div>
+                        <header className="px-2 py-2">
+                          <p className="text-lg font-semibold tracking-wide text-gray-700">
+                            Lose
+                          </p>
+                          <p className="text-lg font-semibold tracking-wide text-gray-700">
+                            Weight
+                          </p>
+                        </header>
+                      </div> */}
                       <div className="w-60 max-w-xl p-5 bg-white text-gray-700 rounded-md hover:shadow-md ring-2 ring-gray-200 peer-checked:text-rose-600 peer-checked:ring-rose-400 peer-checked:ring-offset-2">
-                        {/* <div>
-                        <Image className="h-28 w-48 " src={appLogo} alt="" />
-                    </div>
-                    <header className='px-2.5 py-2.5'>
-                        <p className='text-lg font-bold tracking-wide text-gray-700'>Monday</p>
-                    </header> */}
                         <div className="flex flex-col gap-1">
                           <div className="flex items-center justify-center">
                             <p className="text-sm font-semibold uppercase text-gray-700 text-center">
@@ -511,13 +536,20 @@ const Gen = () => {
                         onChange={handleGoalChange}
                         checked={hasGoal === "Building Muscle"}
                       />
+                      {/* <div className="overflow-hidden rounded-lg bg-white shadow-md ring ring-transparent grayscale transition-all active:scale-95 peer-checked:ring-rose-400 peer-checked:grayscale-0">
+                        <div>
+                          <Image className="day-card " src={muscle} alt="" />
+                        </div>
+                        <header className="px-2 py-2">
+                          <p className="text-lg font-semibold tracking-wide text-gray-700">
+                            Build 
+                          </p>
+                          <p className="text-lg font-semibold tracking-wide text-gray-700">
+                            Muscle
+                          </p>
+                        </header>
+                      </div> */}
                       <div className="w-60 max-w-xl p-5 bg-white text-gray-700 rounded-md hover:shadow-md ring-2 ring-gray-200 peer-checked:text-rose-600 peer-checked:ring-rose-400 peer-checked:ring-offset-2">
-                        {/* <div>
-                        <Image className="h-28 w-48 " src={appLogo} alt="" />
-                    </div>
-                    <header className='px-2.5 py-2.5'>
-                        <p className='text-lg font-bold tracking-wide text-gray-700'>Monday</p>
-                    </header> */}
                         <div className="flex flex-col gap-1">
                           <div className="flex items-center justify-center">
                             <p className="text-sm font-semibold uppercase text-gray-700">
@@ -545,25 +577,31 @@ const Gen = () => {
                           hasGoal === "Improving cardiovascular endurance"
                         }
                       />
+                      {/* <div className="overflow-hidden rounded-lg bg-white shadow-md ring ring-transparent grayscale transition-all active:scale-95 peer-checked:ring-rose-400 peer-checked:grayscale-0">
+                        <div>
+                          <Image className="day-card" src={cardio} alt="" />
+                        </div>
+                        
+                        <p className="text-lg font-semibold tracking-wide text-gray-700">
+                          Improve
+                        </p>
+                        <p className="text-lg font-semibold tracking-wide text-gray-700">
+                          Endurance
+                        </p>
+                        
+                      </div> */}
                       <div className="w-60 max-w-xl p-5 bg-white text-gray-700 rounded-md hover:shadow-md ring-2 ring-gray-200 peer-checked:text-rose-600 peer-checked:ring-rose-400 peer-checked:ring-offset-2">
-                        {/* <div>
-                        <Image className="h-28 w-48 " src={appLogo} alt="" />
-                    </div>
-                    <header className='px-2.5 py-2.5'>
-                        <p className='text-lg font-bold tracking-wide text-gray-700'>Monday</p>
-                    </header> */}
                         <div className="flex flex-col gap-1">
                           <div className="flex items-center justify-center">
                             <p className="text-sm font-semibold uppercase text-gray-700">
-                              Improving cardiovascular endurance
+                              Improving endurance
                             </p>
                           </div>
                           <div className="flex items-end justify-between">
                             <p>
                               This goal involves increasing the body's ability
                               to sustain physical activity for an extended
-                              period of time, such as running a marathon or
-                              participating in a triathlon.
+                              period of time, such as running a marathon.
                             </p>
                           </div>
                         </div>
@@ -584,27 +622,27 @@ const Gen = () => {
 
               {currentStep == 4 && (
                 <div>
-                  <div className="flex flex-col flex-wrap gap-4 items-center">
+                  <div className="flex flex-col flex-wrap gap-4 items-center w-full">
                     <h3 className="text-gray-700 font-bold text-lg">
                       Any other preferences
                     </h3>
 
                     <textarea
-                      className="shadow min-h-5 w-3/6  bg-white-400 bg-opacity-30 border border-gray-300 rounded-xl leading-relaxed text-sm pl-4 py-2.5 focus:outline-none focus:ring-1 focus:ring-rose-400 pr-12 placeholder:text-slate-700"
+                      className="shadow min-h-5 w-full md:w-4/6 bg-white-400 bg-opacity-30 border border-gray-300 rounded-xl leading-relaxed text-sm pl-4 py-2.5 focus:outline-none focus:ring-1 focus:ring-rose-400 pr-12 placeholder:text-slate-400"
                       value={pref}
                       onChange={handleChangePref}
                       name="preferences"
                       placeholder="e.g. No treadmill workouts"
                     />
                   </div>
-                  <div className="flex gap-4 relative justify-center mt-3">
+                  <div className="flex gap-4 relative flex-wrap justify-center mt-3">
                     <button
-                      className="absolute btn-gray left-0"
+                      className="md:absolute btn-gray left-0"
                       onClick={handlePrev}
                     >
                       Prev
                     </button>
-                    <div className="flex flex-col flex-wrap place-self-center gap-4 items-center cursor-pointer">
+                    <div className="flex flex-col flex-wrap  gap-4  cursor-pointer">
                       <a
                         className={
                           isGenerating
@@ -636,7 +674,7 @@ const Gen = () => {
         )}
 
         {!showForm && (
-          <div className="mt-5 sm:w-5/6 md:w-4/6">
+          <div className="mt-5 w-5/6 md:w-4/6">
             {/* <div className="px-2 md:px-10 lg:px-16 md:py-4 flex gap-3 items-center flex-col  w-full">
               <FormDataTable days={days} hasGym={hasGym} hasGoal={hasGoal} /> 
               
@@ -650,27 +688,23 @@ const Gen = () => {
 
                   <div className="p-5 sm:px-2 flex items-center flex-col  w-full mb-4 rounded-lg bg-rose-50 shadow-md ring ring-transparent hover:ring-rose-300 w-full">
                     <Markdown content={apiOutput} />
-                    {!editing &&(
+                    {!editing && (
                       <div className="flex gap-4 mb-4">
-                      <button
-                        className="inline-block rounded-lg bg-gray-400 px-4 py-1.5 text-base font-semibold leading-7 text-white shadow-sm ring-1 ring-gray-500 hover:bg-gray-500 hover:ring-gray-500"
-                        onClick={() => setShowForm(true)}
-                      >
-                        Generate New Plan
-                      </button>
+                        <button
+                          className="inline-block rounded-lg bg-gray-400 px-4 py-1.5 text-base font-semibold leading-7 text-white shadow-sm ring-1 ring-gray-500 hover:bg-gray-500 hover:ring-gray-500"
+                          onClick={() => setShowForm(true)}
+                        >
+                          Generate New Plan
+                        </button>
 
-                      <button
-                        className="inline-block rounded-lg bg-gray-400 px-4 py-1.5 text-base font-semibold leading-7 text-white shadow-sm ring-1 ring-gray-500 hover:bg-gray-500 hover:ring-gray-500"
-                        onClick={handleButtonClick}
-                      >
-                        Improve Current Plan
-                      </button>
-                    </div>
-
-                    )
-
-                    }
-                    
+                        <button
+                          className="inline-block rounded-lg bg-gray-400 px-4 py-1.5 text-base font-semibold leading-7 text-white shadow-sm ring-1 ring-gray-500 hover:bg-gray-500 hover:ring-gray-500"
+                          onClick={handleButtonClick}
+                        >
+                          Improve Current Plan
+                        </button>
+                      </div>
+                    )}
 
                     {showTextArea && (
                       <div className="flex flex-col gap-5 mb-5 items-center w-full">
