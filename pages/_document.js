@@ -4,6 +4,7 @@ export default function Document() {
   return (
     <Html>
       <Head>
+        <link rel='shortcut icon' href='/favicon.ico' />
         <meta property="og:title" content="Find Your Fit" key="title"/>
         <meta property="og:description" content="a place to generate your personalised workout plan in minutes
 " key="description"/>
