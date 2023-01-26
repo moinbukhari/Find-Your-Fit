@@ -1,6 +1,6 @@
 import Head from "next/head";
 import Image from "next/image";
-
+import posthog from 'posthog-js';
 import mon from "../assets/Mon.png";
 import tue from "../assets/Tue.png";
 import wed from "../assets/Wed.png";
@@ -241,10 +241,14 @@ const Gen = () => {
 
   const handleNext = () => {
     setCurrentStep((prevStep) => prevStep + 1);
+    
+    posthog.capture('next', { price: 5900, currency: 'USD' });
+  
   };
 
   const handlePrev = () => {
     setCurrentStep((prevStep) => prevStep - 1);
+    posthog.capture('previous', { price: 5900, currency: 'USD' });
   };
 
   //   const FormComponent = () => {
