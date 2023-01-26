@@ -63,7 +63,7 @@ export default function Example() {
               </div> */}
               <div>
                 <h1 className="text-4xl font-bold tracking-tight sm:text-center sm:text-6xl mb-3">
-                Get your ideal workout plan in under a minute
+                Create your ideal workout plan in seconds
                 </h1>
                 <p className="mt-7 text-2xl leading-8 text-gray-600 sm:text-center">
                 Tell us your fitness goals, preferences and weekly availability.
