@@ -8,7 +8,7 @@ function App({ Component, pageProps }) {
 
   useEffect(() => {
     // Init PostHog
-    posthog.init('phc_F1ZAKe6pt6TXiHNqRiDRpdMjjHDzn6JZeuWN3l4PyzJ', { api_host: 'https://app.posthog.com' });
+    posthog.init('phc_F1ZAKe6pt6TXiHNqRiDRpdMjjHDzn6JZeuWN3l4PyzJ', { api_host: 'https://eu.posthog.com' });
 
     // Track page views
     const handleRouteChange = () => posthog.capture('$pageview');

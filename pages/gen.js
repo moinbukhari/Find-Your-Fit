@@ -98,6 +98,7 @@ const Gen = () => {
     const handleDownload = () => {
       // create a text file with the markdown content
       download(content, "workout_plan.txt", "text/plain");
+      posthog.capture('Downloaded Workout');
     };
 
     const handleKeyDown = (event) => {
@@ -173,6 +174,7 @@ const Gen = () => {
     const data = await response.json();
     const { output } = data;
     console.log("OpenAI replied...", output.text);
+    posthog.capture('Improved Workout');
 
     setApiOutput(`${output.text}`);
     setIsGenerating(false);
@@ -204,6 +206,7 @@ const Gen = () => {
 
     setApiOutput(`${output.text}`);
     setIsGenerating(false);
+    posthog.capture('Generated Workout');
     gtag("event", "click", {
       event_category: "Button",
       event_label: "Generate Workout",
@@ -241,14 +244,11 @@ const Gen = () => {
 
   const handleNext = () => {
     setCurrentStep((prevStep) => prevStep + 1);
-    
-    posthog.capture('next', { price: 5900, currency: 'USD' });
   
   };
 
   const handlePrev = () => {
     setCurrentStep((prevStep) => prevStep - 1);
-    posthog.capture('previous', { price: 5900, currency: 'USD' });
   };
 
   //   const FormComponent = () => {
