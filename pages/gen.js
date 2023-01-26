@@ -1,6 +1,6 @@
 import Head from "next/head";
 import Image from "next/image";
-import appLogo from "../assets/logo1.png";
+
 import mon from "../assets/Mon.png";
 import tue from "../assets/Tue.png";
 import wed from "../assets/Wed.png";
@@ -260,11 +260,13 @@ const Gen = () => {
 
     return <div dangerouslySetInnerHTML={{ __html: html }} />;
   }
+
   //   flex flex-col gap-4
   return (
     <div className="bg-rose-200 flex flex-col flex-no-wrap h-screen overflow-auto p-0 relative ">
       <Head>
         <title>Find Your Fit </title>
+        
       </Head>
       <Analytics />
 
@@ -287,13 +289,13 @@ const Gen = () => {
             rounded-lg bg-white shadow-md ring ring-transparent hover:ring-rose-300 p-5
             "
             >
-              <h3 className="md:text-2xl sm:text-xl font-bold tracking-tight sm:text-center  mb-3">
+              {/* <h3 className="md:text-2xl sm:text-xl font-bold tracking-tight sm:text-center  mb-3">
                 Answer the few questions below and have your workout plan
                 generated in minutes
-              </h3>
+              </h3> */}
               {currentStep == 1 && (
                 <div className="flex flex-col flex-wrap gap-8 items-center">
-                  <h3 className="text-gray-700 font-bold text-lg">
+                  <h3 className="text-gray-700 font-bold text-xl sm:text-2xl ">
                     Select the days you are available to workout:
                   </h3>
                   <ul className="flex flex-wrap gap-4 justify-center">
@@ -434,7 +436,7 @@ const Gen = () => {
 
               {currentStep == 2 && (
                 <div className="flex flex-col flex-wrap gap-4 items-center">
-                  <h3 className="text-gray-700 font-bold text-lg">
+                  <h3 className="text-gray-700 font-bold text-xl sm:text-2xl ">
                     Do you have access to Gym Equipment?
                   </h3>
                   <ul className="flex flex-wrap gap-4">
@@ -484,7 +486,7 @@ const Gen = () => {
 
               {currentStep == 3 && (
                 <div className="flex flex-col flex-wrap gap-4 items-center">
-                  <h3 className="text-gray-700 font-bold text-lg text-center">
+                  <h3 className="text-gray-700 font-bold text-xl sm:text-2xl ">
                     Which of these is your main Fitness Goal at the moment?
                   </h3>
                   <ul className="flex flex-wrap gap-4 justify-center">
@@ -623,7 +625,7 @@ const Gen = () => {
               {currentStep == 4 && (
                 <div>
                   <div className="flex flex-col flex-wrap gap-4 items-center w-full">
-                    <h3 className="text-gray-700 font-bold text-lg">
+                    <h3 className="text-gray-700 font-bold text-xl sm:text-2xl ">
                       Any other preferences
                     </h3>
 
