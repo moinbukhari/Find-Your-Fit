@@ -1,6 +1,6 @@
 import Head from "next/head";
 import Image from "next/image";
-import posthog from 'posthog-js';
+import posthog from "posthog-js";
 import mon from "../assets/Mon.png";
 import tue from "../assets/Tue.png";
 import wed from "../assets/Wed.png";
@@ -9,18 +9,18 @@ import fri from "../assets/Fri.png";
 import sat from "../assets/Sat.png";
 import sun from "../assets/Sun.png";
 import download from "downloadjs";
+import { Toaster, toast } from "react-hot-toast";
 
 import { useState, useEffect } from "react";
 import { Remarkable } from "remarkable";
 import NavBar from "./navbar";
-import ReactMarkdown from "react-markdown";
 
 const Gen = () => {
   const [apiOutput, setApiOutput] = useState("");
   const [isGenerating, setIsGenerating] = useState(false);
   const [days, setDays] = useState([]);
-  const [hasGym, setHasGym] = useState(false);
-  const [hasGoal, setHasGoal] = useState("");
+  const [hasGym, setHasGym] = useState("");
+  const [hasGoal, setHasGoal] = useState([]);
   const [showForm, setShowForm] = useState(true);
   const [pref, setPref] = useState("");
   const [comment, setComment] = useState("");
@@ -45,10 +45,11 @@ const Gen = () => {
   useEffect(() => {
     if (showForm) {
       setCurrentStep(1);
-      setDays((days) => []);
+      setDays([]);
       setPref("");
-      setHasGym(false);
-      setHasGoal(false);
+      setHasGym("");
+      setHasGoal([]);
+      setApiOutput("");
     }
   }, [showForm]);
 
@@ -59,17 +60,17 @@ const Gen = () => {
 
   const handleGoalChange = (event) => {
     const { value } = event.target;
-    setHasGoal(value);
+
+    if (event.target.checked) {
+      setHasGoal((hasGoal) => [...hasGoal, value]);
+    } else {
+      setHasGoal((hasGoal) => hasGoal.filter((goal) => goal !== value));
+    }
+
   };
 
   const handleChangePref = (event) => {
     setPref(event.target.value);
-  };
-
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    // Submit the form data somewhere
-    setSubmitted(true);
   };
 
   const handleButtonClick = () => {
@@ -98,16 +99,19 @@ const Gen = () => {
     const handleDownload = () => {
       // create a text file with the markdown content
       download(content, "workout_plan.txt", "text/plain");
-      posthog.capture('Downloaded Workout');
+      toast("Workout Downloaded", {
+        icon: "🤘",
+      });
+      posthog.capture("Downloaded Workout");
     };
 
-    const handleKeyDown = (event) => {
-      if (event.key === "Enter") {
-        setValue(event.target.value);
-        setApiOutput(value);
-        setEditing(false);
-      }
-    };
+    // const handleKeyDown = (event) => {
+    //   if (event.key === "Enter") {
+    //     setValue(event.target.value);
+    //     setApiOutput(value);
+    //     setEditing(false);
+    //   }
+    // };
 
     const handleBlur = () => {
       setApiOutput(value);
@@ -123,7 +127,6 @@ const Gen = () => {
           <textarea
             value={value}
             onChange={handleChange}
-            onKeyDown={handleKeyDown}
             onBlur={handleBlur}
             className="shadow bg-white-400 bg-opacity-30 border border-gray-300 rounded-xl leading-relaxed text-sm pl-4 py-2.5 my-4 focus:outline-none focus:ring-1 focus:ring-rose-400 pr-12 placeholder:text-slate-700 w-full h-[400px] "
           />
@@ -174,7 +177,7 @@ const Gen = () => {
     const data = await response.json();
     const { output } = data;
     console.log("OpenAI replied...", output.text);
-    posthog.capture('Improved Workout');
+    posthog.capture("Improved Workout");
 
     setApiOutput(`${output.text}`);
     setIsGenerating(false);
@@ -206,12 +209,52 @@ const Gen = () => {
 
     setApiOutput(`${output.text}`);
     setIsGenerating(false);
-    posthog.capture('Generated Workout');
-    gtag("event", "click", {
-      event_category: "Button",
-      event_label: "Generate Workout",
-    });
+    posthog.capture("Generated Workout");
     setShowForm(false);
+    setShowTextArea(false);
+  };
+
+  const generateWorkout = async (e: any) => {
+    e.preventDefault();
+    const prompt = `Generate a workout plan tailored towards ${hasGoal.join(", ")}. The exercises should use ${hasGym}. Make sure workouts are only 1 hour long and are only on ${days.join(", ")}. ${pref==''? '' : pref }Give the number of reps and sets if appropriate. Explain the purpose of each workout day at the end of the section for the day.\n\nReturn text in markdown in the following format:\nWorkout Plan:\n## Day\n\n- **Exercise Name**:\n...\n\n## Day ...\n\n\nWorkout Plan:`;
+    setIsGenerating(true);
+    console.log("Calling OpenAI...");
+    const response = await fetch("/api/generate", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        prompt,
+      }),
+    });
+    console.log("Edge function returned.");
+
+    if (!response.ok) {
+      throw new Error(response.statusText);
+    }
+
+    // This data is a ReadableStream
+    const data = response.body;
+    if (!data) {
+      return;
+    }
+
+    const reader = data.getReader();
+    const decoder = new TextDecoder();
+    let done = false;
+
+    while (!done) {
+      const { value, done: doneReading } = await reader.read();
+      setShowForm(false);
+      done = doneReading;
+      const chunkValue = decoder.decode(value);
+      setApiOutput((prev) => prev + chunkValue);
+    }
+
+    console.log("OpenAI replied...");
+    setIsGenerating(false);
+    posthog.capture("Generated Workout");
     setShowTextArea(false);
   };
 
@@ -244,7 +287,6 @@ const Gen = () => {
 
   const handleNext = () => {
     setCurrentStep((prevStep) => prevStep + 1);
-  
   };
 
   const handlePrev = () => {
@@ -270,8 +312,8 @@ const Gen = () => {
     <div className="bg-rose-200 flex flex-col flex-no-wrap h-screen overflow-auto p-0 relative ">
       <Head>
         <title>Find Your Fit </title>
-        
       </Head>
+
       <Analytics />
 
       <NavBar />
@@ -300,7 +342,7 @@ const Gen = () => {
               {currentStep == 1 && (
                 <div className="flex flex-col flex-wrap gap-8 items-center">
                   <h3 className="text-gray-700 font-bold text-xl sm:text-2xl ">
-                    Select the days you are available to workout:
+                    Which days would you like to workout?
                   </h3>
                   <ul className="flex flex-wrap gap-4 justify-center">
                     <label className="cursor-pointer relative ">
@@ -438,7 +480,7 @@ const Gen = () => {
                 </div>
               )}
 
-              {currentStep == 2 && (
+              {currentStep == 3 && (
                 <div className="flex flex-col flex-wrap gap-4 items-center">
                   <h3 className="text-gray-700 font-bold text-xl sm:text-2xl ">
                     Do you have access to Gym Equipment?
@@ -488,20 +530,20 @@ const Gen = () => {
                 </div>
               )}
 
-              {currentStep == 3 && (
+              {currentStep == 2 && (
                 <div className="flex flex-col flex-wrap gap-4 items-center">
                   <h3 className="text-gray-700 font-bold text-xl sm:text-2xl ">
-                    Which of these is your main Fitness Goal at the moment?
+                   What specific goals do you have in mind that you would like to achieve?
                   </h3>
                   <ul className="flex flex-wrap gap-4 justify-center">
                     <label className="cursor-pointer ">
                       <input
-                        type="radio"
+                        type="checkbox"
                         name="goal"
                         value="Losing Weight"
                         className="peer sr-only"
                         onChange={handleGoalChange}
-                        checked={hasGoal === "Losing Weight"}
+                        checked={hasGoal.includes("Losing Weight")}
                       />
                       {/* <div className="overflow-hidden rounded-lg bg-white shadow-md ring ring-transparent grayscale transition-all active:scale-95 peer-checked:ring-rose-400 peer-checked:grayscale-0">
                         <div>
@@ -535,12 +577,12 @@ const Gen = () => {
                     </label>
                     <label className="cursor-pointer ">
                       <input
-                        type="radio"
+                        type="checkbox"
                         name="goal"
                         value="Building Muscle"
                         className="peer sr-only"
                         onChange={handleGoalChange}
-                        checked={hasGoal === "Building Muscle"}
+                        checked={hasGoal.includes("Building Muscle")}
                       />
                       {/* <div className="overflow-hidden rounded-lg bg-white shadow-md ring ring-transparent grayscale transition-all active:scale-95 peer-checked:ring-rose-400 peer-checked:grayscale-0">
                         <div>
@@ -574,13 +616,13 @@ const Gen = () => {
                     </label>
                     <label className="cursor-pointer">
                       <input
-                        type="radio"
+                        type="checkbox"
                         name="goal"
                         value="Improving cardiovascular endurance"
                         className="peer sr-only"
                         onChange={handleGoalChange}
                         checked={
-                          hasGoal === "Improving cardiovascular endurance"
+                          hasGoal.includes("Improving cardiovascular endurance")
                         }
                       />
                       {/* <div className="overflow-hidden rounded-lg bg-white shadow-md ring ring-transparent grayscale transition-all active:scale-95 peer-checked:ring-rose-400 peer-checked:grayscale-0">
@@ -655,7 +697,7 @@ const Gen = () => {
                             ? "inline-block rounded-lg bg-rose-600 px-4 py-1.5 text-base font-semibold leading-7 text-white shadow-sm ring-1 ring-rose-600 hover:bg-rose-700 hover:ring-rose-700 opacity-70 hover:cursor-not-allowed duration-[500ms,800ms]"
                             : "inline-block rounded-lg bg-rose-600 px-4 py-1.5 text-base font-semibold leading-7 text-white shadow-sm ring-1 ring-rose-600 hover:bg-rose-700 hover:ring-rose-700"
                         }
-                        onClick={callGenerateEndpoint}
+                        onClick={(e) => generateWorkout(e)}
                       >
                         <div className="outline-none flex flex-col justify-start flex-shrink-0 transform-none ">
                           {isGenerating ? (
@@ -680,78 +722,86 @@ const Gen = () => {
         )}
 
         {!showForm && (
-          <div className="mt-5 w-5/6 md:w-4/6">
-            {/* <div className="px-2 md:px-10 lg:px-16 md:py-4 flex gap-3 items-center flex-col  w-full">
+          <>
+            <Toaster
+              position="top-center"
+              reverseOrder={false}
+              toastOptions={{ duration: 2000 }}
+            />
+
+            <div className="mt-5 w-5/6 md:w-4/6">
+              {/* <div className="px-2 md:px-10 lg:px-16 md:py-4 flex gap-3 items-center flex-col  w-full">
               <FormDataTable days={days} hasGym={hasGym} hasGoal={hasGoal} /> 
               
             </div> */}
-            <div className="px-2 md:px-10 lg:px-16 md:py-4 w-full">
-              {apiOutput && !showForm && (
-                <div className="flex flex-col items-center pt-5 mb-4 w-full">
-                  <h3 className="text-4xl font-bold tracking-tight sm:text-center sm:text-6xl mb-5">
-                    Workout Plan
-                  </h3>
+              <div className="px-2 md:px-10 lg:px-16 md:py-4 w-full">
+                {apiOutput && !showForm && (
+                  <div className="flex flex-col items-center pt-5 mb-4 w-full">
+                    <h3 className="text-4xl font-bold tracking-tight sm:text-center sm:text-6xl mb-5">
+                      Workout Plan
+                    </h3>
 
-                  <div className="p-5 sm:px-2 flex items-center flex-col  w-full mb-4 rounded-lg bg-rose-50 shadow-md ring ring-transparent hover:ring-rose-300 w-full">
-                    <Markdown content={apiOutput} />
-                    {!editing && (
-                      <div className="flex gap-4 mb-4">
-                        <button
-                          className="inline-block rounded-lg bg-gray-400 px-4 py-1.5 text-base font-semibold leading-7 text-white shadow-sm ring-1 ring-gray-500 hover:bg-gray-500 hover:ring-gray-500"
-                          onClick={() => setShowForm(true)}
-                        >
-                          Generate New Plan
-                        </button>
-
-                        <button
-                          className="inline-block rounded-lg bg-gray-400 px-4 py-1.5 text-base font-semibold leading-7 text-white shadow-sm ring-1 ring-gray-500 hover:bg-gray-500 hover:ring-gray-500"
-                          onClick={handleButtonClick}
-                        >
-                          Improve Current Plan
-                        </button>
-                      </div>
-                    )}
-
-                    {showTextArea && (
-                      <div className="flex flex-col gap-5 mb-5 items-center w-full">
-                        <textarea
-                          className="shadow min-h-5 bg-white-400 bg-opacity-30 border border-gray-300 rounded-xl leading-relaxed text-sm pl-4 py-2.5 focus:outline-none focus:ring-1 focus:ring-rose-400 pr-12 placeholder:text-slate-400 w-full h-20"
-                          value={comment}
-                          onChange={handleTextAreaChange}
-                          placeholder="e.g Maximum 5 exercises each day"
-                        />
-
-                        <div className="flex flex-col flex-wrap gap-4 items-center cursor-pointer">
-                          <a
-                            className={
-                              isGenerating
-                                ? "inline-block rounded-lg bg-rose-600 px-4 py-1.5 text-base font-semibold leading-7 text-white shadow-sm ring-1 ring-rose-600 hover:bg-rose-700 hover:ring-rose-700 opacity-70 hover:cursor-not-allowed duration-[500ms,800ms]"
-                                : "inline-block rounded-lg bg-rose-600 px-4 py-1.5 text-base font-semibold leading-7 text-white shadow-sm ring-1 ring-rose-600 hover:bg-rose-700 hover:ring-rose-700"
-                            }
-                            onClick={improveWorkout}
+                    <div className="p-5 sm:px-2 flex items-center flex-col  w-full mb-4 rounded-lg bg-rose-50 shadow-md ring ring-transparent hover:ring-rose-300 w-full">
+                      <Markdown content={apiOutput} />
+                      {!editing && (
+                        <div className="flex gap-4 mb-4">
+                          <button
+                            className="inline-block rounded-lg bg-gray-400 px-4 py-1.5 text-base font-semibold leading-7 text-white shadow-sm ring-1 ring-gray-500 hover:bg-gray-500 hover:ring-gray-500"
+                            onClick={() => setShowForm(true)}
                           >
-                            <div className="outline-none flex flex-col justify-start flex-shrink-0 transform-none ">
-                              {isGenerating ? (
-                                <div className="flex gap-3">
-                                  <div className="my-auto h-5 w-5  border-t-transparent border-solid animate-spin rounded-full border-white border-4"></div>
-                                  <div className="my-auto -mx-1">
-                                    {" "}
-                                    Regenerating...{" "}
-                                  </div>
-                                </div>
-                              ) : (
-                                <p>Regenerate Workout</p>
-                              )}
-                            </div>
-                          </a>
+                            Generate New Plan
+                          </button>
+
+                          <button
+                            className="inline-block rounded-lg bg-gray-400 px-4 py-1.5 text-base font-semibold leading-7 text-white shadow-sm ring-1 ring-gray-500 hover:bg-gray-500 hover:ring-gray-500"
+                            onClick={handleButtonClick}
+                          >
+                            Improve Current Plan
+                          </button>
                         </div>
-                      </div>
-                    )}
+                      )}
+
+                      {showTextArea && (
+                        <div className="flex flex-col gap-5 mb-5 items-center w-full">
+                          <textarea
+                            className="shadow min-h-5 bg-white-400 bg-opacity-30 border border-gray-300 rounded-xl leading-relaxed text-sm pl-4 py-2.5 focus:outline-none focus:ring-1 focus:ring-rose-400 pr-12 placeholder:text-slate-400 w-full h-20"
+                            value={comment}
+                            onChange={handleTextAreaChange}
+                            placeholder="e.g Maximum 5 exercises each day"
+                          />
+
+                          <div className="flex flex-col flex-wrap gap-4 items-center cursor-pointer">
+                            <a
+                              className={
+                                isGenerating
+                                  ? "inline-block rounded-lg bg-rose-600 px-4 py-1.5 text-base font-semibold leading-7 text-white shadow-sm ring-1 ring-rose-600 hover:bg-rose-700 hover:ring-rose-700 opacity-70 hover:cursor-not-allowed duration-[500ms,800ms]"
+                                  : "inline-block rounded-lg bg-rose-600 px-4 py-1.5 text-base font-semibold leading-7 text-white shadow-sm ring-1 ring-rose-600 hover:bg-rose-700 hover:ring-rose-700"
+                              }
+                              onClick={improveWorkout}
+                            >
+                              <div className="outline-none flex flex-col justify-start flex-shrink-0 transform-none ">
+                                {isGenerating ? (
+                                  <div className="flex gap-3">
+                                    <div className="my-auto h-5 w-5  border-t-transparent border-solid animate-spin rounded-full border-white border-4"></div>
+                                    <div className="my-auto -mx-1">
+                                      {" "}
+                                      Regenerating...{" "}
+                                    </div>
+                                  </div>
+                                ) : (
+                                  <p>Regenerate Workout</p>
+                                )}
+                              </div>
+                            </a>
+                          </div>
+                        </div>
+                      )}
+                    </div>
                   </div>
-                </div>
-              )}
+                )}
+              </div>
             </div>
-          </div>
+          </>
         )}
       </div>
 
