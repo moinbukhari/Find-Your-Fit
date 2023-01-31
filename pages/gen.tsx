@@ -216,7 +216,7 @@ const Gen = () => {
 
   const generateWorkout = async (e: any) => {
     e.preventDefault();
-    const prompt = `Generate a workout plan tailored towards ${hasGoal.join(", ")}. The exercises should use ${hasGym}. Make sure workouts are only 1 hour long and are only on ${days.join(", ")}. ${pref==''? '' : pref }Give the number of reps and sets if appropriate. Explain the purpose of each workout day at the end of the section for the day.\n\nReturn text in markdown in the following format:\nWorkout Plan:\n## Day\n\n- **Exercise Name**:\n...\n\n## Day ...\n\n\nWorkout Plan:`;
+    const prompt = `Generate a workout plan tailored towards ${hasGoal.join(", ")}. The exercises should use ${hasGym}. Make sure workouts are only 1 hour long and are only on ${days.join(", ")}. ${pref==''? '' : pref}${pref.slice(-1) === "." ? "" : "."}\nGive the number of reps and sets if appropriate. Explain the purpose of each workout day at the end of the section for the day.\n\nReturn text in markdown in the following format:\nWorkout Plan:\n## Day\n\n- **Exercise Name**:\n...\n\n## Day ...\n\n\nWorkout Plan:`;
     setIsGenerating(true);
     console.log("Calling OpenAI...");
     const response = await fetch("/api/generate", {
@@ -655,6 +655,34 @@ const Gen = () => {
                         </div>
                       </div>
                     </label>
+
+                    {/* <label className="cursor-pointer">
+                      <input
+                        type="checkbox"
+                        name="goal"
+                        value="Maintaining Health"
+                        className="peer sr-only"
+                        onChange={handleGoalChange}
+                        checked={
+                          hasGoal.includes("Maintaining Health")
+                        }
+                      />
+                  
+                      <div className="w-60 max-w-xl p-5 bg-white text-gray-700 rounded-md hover:shadow-md ring-2 ring-gray-200 peer-checked:text-rose-600 peer-checked:ring-rose-400 peer-checked:ring-offset-2">
+                        <div className="flex flex-col gap-1">
+                          <div className="flex items-center justify-center">
+                            <p className="text-sm font-semibold uppercase text-gray-700">
+                              Maintaining Health
+                            </p>
+                          </div>
+                          <div className="flex items-end justify-between">
+                            <p>
+                            The purpose of this goal is to maintain overall physical fitness by participating in regular exercise. By maintaining fitness, an individual can reduce their risk of developing certain diseases, improve their overall quality of life, and increase energy levels.
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    </label> */}
                   </ul>
 
                   <div className="flex gap-5 flex-row justify-between w-full">
