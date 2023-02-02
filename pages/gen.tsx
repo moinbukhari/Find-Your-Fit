@@ -24,6 +24,7 @@ const Gen = () => {
   const [showForm, setShowForm] = useState(true);
   const [pref, setPref] = useState("");
   const [comment, setComment] = useState("");
+  const [email, setEmail] = useState("");
   const [currentStep, setCurrentStep] = useState(1);
   const [editing, setEditing] = useState(false);
   const [showTextArea, setShowTextArea] = useState(false);
@@ -38,9 +39,13 @@ const Gen = () => {
     //console.log(days)
   };
 
-  useEffect(() => {
-    console.log(days);
-  }, [days]);
+  // useEffect(() => {
+  //   console.log(days);
+  // }, [days]);
+
+  // useEffect(() => {
+  //   console.log(email);
+  // }, [email]);
 
   useEffect(() => {
     if (showForm) {
@@ -58,6 +63,11 @@ const Gen = () => {
     setHasGym(value);
   };
 
+  const handleEmailChange = (event) => {
+    const { value } = event.target;
+    setEmail(value);
+  };
+
   const handleGoalChange = (event) => {
     const { value } = event.target;
 
@@ -66,7 +76,6 @@ const Gen = () => {
     } else {
       setHasGoal((hasGoal) => hasGoal.filter((goal) => goal !== value));
     }
-
   };
 
   const handleChangePref = (event) => {
@@ -214,9 +223,15 @@ const Gen = () => {
     setShowTextArea(false);
   };
 
-  const generateWorkout = async (e: any) => {
+  const handleSubmit = async (e: any) => {
     e.preventDefault();
-    const prompt = `Generate a workout plan tailored towards ${hasGoal.join(", ")}. The exercises should use ${hasGym}. Make sure workouts are only 1 hour long and are only on ${days.join(", ")}. ${pref==''? '' : pref}${pref.slice(-1) === "." ? "" : "."}\nGive the number of reps and sets if appropriate. Explain the purpose of each workout day at the end of the section for the day.\n\nReturn text in markdown in the following format:\nWorkout Plan:\n## Day\n\n- **Exercise Name**:\n...\n\n## Day ...\n\n\nWorkout Plan:`;
+    const prompt = `Generate a workout plan tailored towards ${hasGoal.join(
+      ", "
+    )}. The exercises should use ${hasGym}. Make sure workouts are only 1 hour long and are only on ${days.join(
+      ", "
+    )}. The workout plan should take into account that ${pref == "" ? "" : pref}${
+      pref.slice(-1) === "." ? "" : "."
+    }\nGive the number of reps and sets if appropriate. Give a detailed purpose of each workout day at the end of the section for the day.\n\nReturn text in markdown in the following format:\nWorkout Plan:\n## Day\n\n- **Exercise Name**:\n...\n\n## Day ...\n\n\nWorkout Plan:`;
     setIsGenerating(true);
     console.log("Calling OpenAI...");
     const response = await fetch("/api/generate", {
@@ -254,7 +269,7 @@ const Gen = () => {
 
     console.log("OpenAI replied...");
     setIsGenerating(false);
-    posthog.capture("Generated Workout");
+    posthog.capture("Generated Workout", { Email: email });
     setShowTextArea(false);
   };
 
@@ -330,7 +345,7 @@ const Gen = () => {
         </div> */}
         {showForm && (
           <div className="p-8 flex items-center justify-center flex-col w-full gap-6 text-center">
-            <form
+            <div
               className="flex flex-col gap-8 mb-4 lg:w-4/6  md:w-5/6 sm:w-5/6
             rounded-lg bg-white shadow-md ring ring-transparent hover:ring-rose-300 p-5
             "
@@ -533,7 +548,8 @@ const Gen = () => {
               {currentStep == 2 && (
                 <div className="flex flex-col flex-wrap gap-4 items-center">
                   <h3 className="text-gray-700 font-bold text-xl sm:text-2xl ">
-                   What specific goals do you have in mind that you would like to achieve?
+                    What specific goals do you have in mind that you would like
+                    to achieve?
                   </h3>
                   <ul className="flex flex-wrap gap-4 justify-center">
                     <label className="cursor-pointer ">
@@ -621,9 +637,9 @@ const Gen = () => {
                         value="Improving cardiovascular endurance"
                         className="peer sr-only"
                         onChange={handleGoalChange}
-                        checked={
-                          hasGoal.includes("Improving cardiovascular endurance")
-                        }
+                        checked={hasGoal.includes(
+                          "Improving cardiovascular endurance"
+                        )}
                       />
                       {/* <div className="overflow-hidden rounded-lg bg-white shadow-md ring ring-transparent grayscale transition-all active:scale-95 peer-checked:ring-rose-400 peer-checked:grayscale-0">
                         <div>
@@ -700,25 +716,27 @@ const Gen = () => {
                 <div>
                   <div className="flex flex-col flex-wrap gap-4 items-center w-full">
                     <h3 className="text-gray-700 font-bold text-xl sm:text-2xl ">
-                      Any other preferences
+                      Add any details to tailor your workout.
                     </h3>
 
                     <textarea
-                      className="shadow min-h-5 w-full md:w-4/6 bg-white-400 bg-opacity-30 border border-gray-300 rounded-xl leading-relaxed text-sm pl-4 py-2.5 focus:outline-none focus:ring-1 focus:ring-rose-400 pr-12 placeholder:text-slate-400"
+                      className="shadow min-h-5 w-full font-medium md:w-4/6 bg-white-400 placeholder-gray-500 bg-opacity-30 border border-gray-300 rounded-xl leading-relaxed text-sm pl-4 py-2.5 focus:outline-none focus:ring-1 focus:ring-rose-400 pr-12"
                       value={pref}
                       onChange={handleChangePref}
                       name="preferences"
-                      placeholder="e.g. No treadmill workouts"
+                      placeholder="e.g. I want to get better at climbing."
                     />
                   </div>
                   <div className="flex gap-4 relative flex-wrap justify-center mt-3">
-                    <button
-                      className="md:absolute btn-gray left-0"
-                      onClick={handlePrev}
-                    >
-                      Prev
-                    </button>
-                    <div className="flex flex-col flex-wrap  gap-4  cursor-pointer">
+                    <div className="flex gap-5 flex-row justify-between w-full">
+                      <button className="btn-gray" onClick={handlePrev}>
+                        Prev
+                      </button>
+                      <button className="btn-custom" onClick={handleNext}>
+                        Next
+                      </button>
+                    </div>
+                    {/* <div className="flex flex-col flex-wrap  gap-4  cursor-pointer">
                       <a
                         className={
                           isGenerating
@@ -741,11 +759,64 @@ const Gen = () => {
                           )}
                         </div>
                       </a>
-                    </div>
+                    </div> */}
                   </div>
                 </div>
               )}
-            </form>
+
+              {currentStep == 5 && (
+                <div className="flex flex-col flex-wrap gap-4 items-center w-full relative">
+                  <h3 className="text-gray-700 font-bold text-xl sm:text-2xl ">
+                    Your 🔥 workout is almost ready.
+                  </h3>
+
+                  <form
+                    onSubmit={(e) => handleSubmit(e)}
+                    className="mb-9 w-full"
+                  >
+                    <div className="mb-5">
+                      <input
+                        className="px-4 py-3 w-96 text-gray-500 font-medium text-center placeholder-gray-500 outline-none border border-gray-300 rounded-lg focus:ring focus:ring-rose-300"
+                        id="newsletterInput1-2"
+                        type="email"
+                        placeholder="Enter Email to Generate Workout."
+                        onChange={handleEmailChange}
+                      />
+                    </div>
+                    <div className="flex gap-4 relative flex-wrap justify-center mt-3 ">
+                      <button
+                        className="md:absolute btn-gray left-0"
+                        onClick={handlePrev}
+                      >
+                        Prev
+                      </button>
+                      <button
+                        className={
+                          isGenerating
+                            ? "inline-block rounded-lg bg-rose-600 px-4 py-1.5 text-base font-semibold leading-7 text-white shadow-sm ring-1 ring-rose-600 hover:bg-rose-700 hover:ring-rose-700 opacity-70 hover:cursor-not-allowed duration-[500ms,800ms]"
+                            : "inline-block rounded-lg bg-rose-600 px-4 py-1.5 text-base font-semibold leading-7 text-white shadow-sm ring-1 ring-rose-600 hover:bg-rose-700 hover:ring-rose-700"
+                        }
+                        type="submit"
+                      >
+                        <div className="outline-none flex flex-col justify-start flex-shrink-0 transform-none ">
+                          {isGenerating ? (
+                            <div className="flex gap-3">
+                              <div className="my-auto h-5 w-5  border-t-transparent border-solid animate-spin rounded-full border-white border-4"></div>
+                              <div className="my-auto -mx-1">
+                                {" "}
+                                Generating...{" "}
+                              </div>
+                            </div>
+                          ) : (
+                            <p>Generate Workout</p>
+                          )}
+                        </div>
+                      </button>
+                    </div>
+                  </form>
+                </div>
+              )}
+            </div>
           </div>
         )}
 
