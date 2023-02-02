@@ -1,5 +1,6 @@
 import Head from "next/head";
 import Image from "next/image";
+import appLogo from "../assets/logo1.png";
 import posthog from "posthog-js";
 import mon from "../assets/Mon.png";
 import tue from "../assets/Tue.png";
@@ -8,6 +9,7 @@ import thu from "../assets/Thu.png";
 import fri from "../assets/Fri.png";
 import sat from "../assets/Sat.png";
 import sun from "../assets/Sun.png";
+import Link from "next/link";
 import download from "downloadjs";
 import { Toaster, toast } from "react-hot-toast";
 
@@ -229,7 +231,9 @@ const Gen = () => {
       ", "
     )}. The exercises should use ${hasGym}. Make sure workouts are only 1 hour long and are only on ${days.join(
       ", "
-    )}. The workout plan should take into account that ${pref == "" ? "" : pref}${
+    )}. The workout plan should take into account that ${
+      pref == "" ? "" : pref
+    }${
       pref.slice(-1) === "." ? "" : "."
     }\nGive the number of reps and sets if appropriate. Give a detailed purpose of each workout day at the end of the section for the day.\n\nReturn text in markdown in the following format:\nWorkout Plan:\n## Day\n\n- **Exercise Name**:\n...\n\n## Day ...\n\n\nWorkout Plan:`;
     setIsGenerating(true);
@@ -331,9 +335,32 @@ const Gen = () => {
 
       <Analytics />
 
-      <NavBar />
+      <div className="px-6 pt-6 lg:px-8 mb-6">
+        <div>
+          <nav
+            className="flex h-9 items-center justify-between"
+            aria-label="Global"
+          >
+            <div className="flex lg:min-w-0 lg:flex-1" aria-label="Global">
+              <a href="/" className="flex -m-1.5 p-1.5 text-center ">
+                <Image
+                  className="h-12 w-12 rounded-full mr-1"
+                  src={appLogo}
+                  alt=""
+                />
+                <span className="font-mono tracking-tighter font-bold text-lg flex items-center text-left ">
+                  Find Your Fit
+                </span>
+              </a>
+            </div>
+            <Link target="_blank" href="https://www.buymeacoffee.com/moinbukhari" className="bg-transparent hover:bg-yellow-500 text-yellow-700 font-semibold hover:text-white py-2 px-4 border border-yellow-500 hover:border-transparent rounded">
+              Buy me a Protein Shake 🥤
+            </Link>
+          </nav>
+        </div>
+      </div>
 
-      <div className="flex flex-col gap-6 items-center justify-center ">
+      <div className="flex flex-col gap-6 items-center justify-center relative">
         {/* <div className="">
           <div className="">
             <h1>Find Your Fit </h1>
