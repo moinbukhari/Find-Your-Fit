@@ -231,11 +231,11 @@ const Gen = () => {
       ", "
     )}. The exercises should use ${hasGym}. Make sure workouts are only 1 hour long and are only on ${days.join(
       ", "
-    )}. The workout plan should take into account that ${
+    )}.The workout plan must take into account that ${
       pref == "" ? "" : pref
     }${
       pref.slice(-1) === "." ? "" : "."
-    }\nGive the number of reps and sets if appropriate. Give a detailed purpose of each workout day at the end of the section for the day.\n\nReturn text in markdown in the following format:\nWorkout Plan:\n## Day\n\n- **Exercise Name**:\n...\n\n## Day ...\n\n\nWorkout Plan:`;
+    }\nIf the workout exercise uses weights add warmup exercises at the start. Give the number of reps and sets if appropriate. Give a detailed purpose of each workout day at the end of the section for the day.\n\nReturn text in markdown in the following format:\nWorkout Plan:\n## Day\n\n- **Exercise Name**:\n...\n\n## Day ...\n\n\nWorkout Plan:`;
     setIsGenerating(true);
     console.log("Calling OpenAI...");
     const response = await fetch("/api/generate", {
