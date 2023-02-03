@@ -1,21 +1,24 @@
-import { useState } from 'react'
+import { useState } from "react";
 // import { Dialog } from '@headlessui/react'
 // import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline'
 
-import NavBar from './navbar';
-
-
+import NavBar from "./navbar";
 
 const navigation = [
-  { name: 'Product', href: '#' },
-  { name: 'Features', href: '#' },
-  { name: 'Marketplace', href: '#' },
-  { name: 'Company', href: '#' },
-]
+  { name: "Product", href: "#" },
+  { name: "Features", href: "#" },
+  { name: "Marketplace", href: "#" },
+  { name: "Company", href: "#" },
+];
+
 
 export default function Example() {
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
-
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [email, setEmail] = useState("");
+  const handleEmailChange = (event) => {
+    const { value } = event.target;
+    setEmail(value);
+  };
   return (
     <div className="isolate bg-rose-100 h-auto ">
       <div className="absolute inset-x-0 top-[-10rem] -z-10 transform-gpu overflow-hidden blur-3xl sm:top-[-20rem]">
@@ -46,7 +49,7 @@ export default function Example() {
         </svg>
       </div>
       <NavBar></NavBar>
-      <main >
+      <main>
         <div className="relative px-6 lg:px-8">
           <div className="mx-auto max-w-3xl pt-20 pb-32 sm:pt-48 sm:pb-40">
             <div>
@@ -63,18 +66,30 @@ export default function Example() {
               </div> */}
               <div>
                 <h1 className="text-4xl font-bold tracking-tight sm:text-center sm:text-6xl mb-3">
-                Create your ideal workout plan in seconds
+                  Create your ideal workout plan in seconds
                 </h1>
                 <p className="mt-7 text-2xl leading-8 text-gray-600 sm:text-center">
-                Tell us your fitness goals, preferences and weekly availability.
+                  Tell us your fitness goals, preferences and weekly
+                  availability.
                 </p>
-                <p className=' text-2xl leading-8 text-gray-600 sm:text-center'>Get a personalised plan that fits your needs.</p>
-                <div className="mt-8 flex gap-x-4 sm:justify-center">
+                <p className=" text-2xl leading-8 text-gray-600 sm:text-center">
+                  Get a personalised plan that fits your needs.
+                </p>
+                <div className="mt-8 flex flex-col gap-x-4 sm:justify-center justify-center items-center">
+                  <div className="mb-5">
+                    <input
+                      className="px-4 py-3 w-96 text-gray-500 font-medium text-center placeholder-gray-500 outline-none border border-gray-300 rounded-lg focus:ring focus:ring-rose-300"
+                      id="newsletterInput1-2"
+                      type="email"
+                      placeholder="Enter Email to Get Started."
+                      onChange={handleEmailChange}
+                    />
+                  </div>
                   <a
                     href="/gen"
-                    className="inline-block rounded-lg bg-rose-600 px-4 py-1.5 text-base font-semibold leading-7 text-white shadow-sm ring-1 ring-rose-600 hover:bg-rose-700 hover:ring-rose-700"
+                    className="inline-block w-max rounded-lg bg-rose-600 px-4 py-1.5 text-base font-semibold leading-7 text-white shadow-sm ring-1 ring-rose-600 hover:bg-rose-700 hover:ring-rose-700"
                   >
-                    Generate Workout{' '}
+                    Generate Workout{" "}
                     <span className="text-rose-200" aria-hidden="true">
                       &rarr;
                     </span>
@@ -122,5 +137,5 @@ export default function Example() {
         </div>
       </main>
     </div>
-  )
+  );
 }

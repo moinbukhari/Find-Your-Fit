@@ -225,15 +225,13 @@ const Gen = () => {
     setShowTextArea(false);
   };
 
-  const handleSubmit = async (e: any) => {
+  const generateWorkout = async (e: any) => {
     e.preventDefault();
     const prompt = `Generate a workout plan tailored towards ${hasGoal.join(
       ", "
     )}. The exercises should use ${hasGym}. Make sure workouts are only 1 hour long and are only on ${days.join(
       ", "
-    )}.The workout plan must take into account that ${
-      pref == "" ? "" : pref
-    }${
+    )}.The workout plan must take into account that ${pref == "" ? "" : pref}${
       pref.slice(-1) === "." ? "" : "."
     }\nIf the workout exercise uses weights add warmup exercises at the start. Give the number of reps and sets if appropriate. Give a detailed purpose of each workout day at the end of the section for the day.\n\nReturn text in markdown in the following format:\nWorkout Plan:\n## Day\n\n- **Exercise Name**:\n...\n\n## Day ...\n\n\nWorkout Plan:`;
     setIsGenerating(true);
@@ -353,7 +351,11 @@ const Gen = () => {
                 </span>
               </a>
             </div>
-            <Link target="_blank" href="https://www.buymeacoffee.com/moinbukhari" className="bg-transparent hover:bg-yellow-500 text-yellow-700 font-semibold hover:text-white py-2 px-4 border border-yellow-500 hover:border-transparent rounded">
+            <Link
+              target="_blank"
+              href="https://www.buymeacoffee.com/moinbukhari"
+              className="bg-transparent hover:bg-yellow-500 text-yellow-700 font-semibold hover:text-white py-2 px-4 border border-yellow-500 hover:border-transparent rounded"
+            >
               Buy me a Protein Shake 🥤
             </Link>
           </nav>
@@ -755,43 +757,44 @@ const Gen = () => {
                     />
                   </div>
                   <div className="flex gap-4 relative flex-wrap justify-center mt-3">
-                    <div className="flex gap-5 flex-row justify-between w-full">
+                    {/* <div className="flex gap-5 flex-row justify-between w-full">
                       <button className="btn-gray" onClick={handlePrev}>
                         Prev
                       </button>
                       <button className="btn-custom" onClick={handleNext}>
                         Next
                       </button>
-                    </div>
-                    {/* <div className="flex flex-col flex-wrap  gap-4  cursor-pointer">
-                      <a
-                        className={
-                          isGenerating
-                            ? "inline-block rounded-lg bg-rose-600 px-4 py-1.5 text-base font-semibold leading-7 text-white shadow-sm ring-1 ring-rose-600 hover:bg-rose-700 hover:ring-rose-700 opacity-70 hover:cursor-not-allowed duration-[500ms,800ms]"
-                            : "inline-block rounded-lg bg-rose-600 px-4 py-1.5 text-base font-semibold leading-7 text-white shadow-sm ring-1 ring-rose-600 hover:bg-rose-700 hover:ring-rose-700"
-                        }
-                        onClick={(e) => generateWorkout(e)}
-                      >
-                        <div className="outline-none flex flex-col justify-start flex-shrink-0 transform-none ">
-                          {isGenerating ? (
-                            <div className="flex gap-3">
-                              <div className="my-auto h-5 w-5  border-t-transparent border-solid animate-spin rounded-full border-white border-4"></div>
-                              <div className="my-auto -mx-1">
-                                {" "}
-                                Generating...{" "}
-                              </div>
-                            </div>
-                          ) : (
-                            <p>Generate Workout</p>
-                          )}
-                        </div>
-                      </a>
                     </div> */}
+                    <button
+                      className="md:absolute btn-gray left-0"
+                      onClick={handlePrev}
+                    >
+                      Prev
+                    </button>
+                    <button
+                      className={
+                        isGenerating
+                          ? "inline-block rounded-lg bg-rose-600 px-4 py-1.5 text-base font-semibold leading-7 text-white shadow-sm ring-1 ring-rose-600 hover:bg-rose-700 hover:ring-rose-700 opacity-70 hover:cursor-not-allowed duration-[500ms,800ms]"
+                          : "inline-block rounded-lg bg-rose-600 px-4 py-1.5 text-base font-semibold leading-7 text-white shadow-sm ring-1 ring-rose-600 hover:bg-rose-700 hover:ring-rose-700"
+                      }
+                      onClick={e => generateWorkout(e)}
+                    >
+                      <div className="outline-none flex flex-col justify-start flex-shrink-0 transform-none ">
+                        {isGenerating ? (
+                          <div className="flex gap-3">
+                            <div className="my-auto h-5 w-5  border-t-transparent border-solid animate-spin rounded-full border-white border-4"></div>
+                            <div className="my-auto -mx-1"> Generating... </div>
+                          </div>
+                        ) : (
+                          <p>Generate Workout</p>
+                        )}
+                      </div>
+                    </button>
                   </div>
                 </div>
               )}
 
-              {currentStep == 5 && (
+              {/* {currentStep == 5 && (
                 <div className="flex flex-col flex-wrap gap-4 items-center w-full relative">
                   <h3 className="text-gray-700 font-bold text-xl sm:text-2xl ">
                     Your 🔥 workout is almost ready.
@@ -842,7 +845,7 @@ const Gen = () => {
                     </div>
                   </form>
                 </div>
-              )}
+              )} */}
             </div>
           </div>
         )}
