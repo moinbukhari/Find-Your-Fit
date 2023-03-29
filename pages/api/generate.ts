@@ -19,10 +19,11 @@ const handler = async (req: NextRequest): Promise<Response> => {
     return new Response("No prompt in the request", { status: 400 });
   }
 
+  console.log(prompt)
   const payload: OpenAIStreamPayload = {
     model: "gpt-3.5-turbo",
     messages: [
-                {role: "system", content: "You are a professional personal trainer that is an expert in health and fitness. You help people lose weight, get in shape and improve their health."},
+                {role: "system", content: "You are a professional personal trainer that is an expert in health and fitness. You help people lose weight, get in shape and improve their fitness."},
                 {role: "user", content: prompt}
             ],
     stream: true,

@@ -153,7 +153,7 @@ export default function Gen() {
 
     //const html = md.render(content)
     return (
-      <div className="prose flex flex-col gap-4 pb-4 items-center">
+      <div className="prose w-full flex flex-col gap-4 pb-4 items-center">
         <div dangerouslySetInnerHTML={{ __html: html }} />
         <div className="flex flex-row gap-4">
           <button
@@ -237,10 +237,10 @@ export default function Gen() {
     const prompt = `Generate a workout plan tailored towards ${hasGoal.join(
       ", "
     )}.${
-      hasGym
-        ? "I have access to gym equipment."
-        : "I don't have access to any gym equipment."
-    } Make sure workouts are only 1 hour long and are only on ${days.join(
+      hasGym === "Gym Equipment"
+        ? " I have access to gym equipment."
+        : " I don't have access to any gym equipment."
+    } Make sure workouts are about 1 hour long and are only on ${days.join(
       ", "
     )}. Add warmup exercises at the beginning for 5 minutes if weights are being used.${
       pref == ""
@@ -249,7 +249,10 @@ export default function Gen() {
           pref
     }${
       pref.slice(-1) === "." ? "" : "."
-    }\nGive the number of reps and sets if appropriate. Give a detailed purpose of each workout day at the end section for that day.\n\nReturn text in markdown in the following format:\nWorkout Plan:\n## Day of the week\n\n- *Warmup/Streching*\n- **Exercise Name**:\n...\n\n## Day ...\nWorkout Plan:`;
+    }\nGive the number of reps and sets if appropriate. Give a detailed purpose of each workout day at the end section for that day.
+    
+    \nReturn text in markdown in the following format:\nWorkout Plan:\n## {Day of the week}\n\n- *Warmup/Streching*\n- **{Exercise Name}**:\n...\n\n## {Day of the week} ...\nWorkout Plan:`;
+    
     setIsGenerating(true);
     console.log("Calling OpenAI...");
     const response = await fetch("/api/generate", {
@@ -887,7 +890,7 @@ export default function Gen() {
                       Workout Plan
                     </h3>
 
-                    <div className="p-5 sm:px-2 flex items-center flex-col  w-full mb-4 rounded-lg bg-rose-50 shadow-md ring ring-transparent hover:ring-rose-300 w-full">
+                    <div className="p-5 sm:px-2 flex items-center flex-col w-3/4 mb-4 rounded-lg bg-rose-50 shadow-md ring ring-transparent hover:ring-rose-300">
                       <Markdown content={apiOutput} />
                       {/* {!editing && (
                         <div className="flex gap-4 mb-4">
