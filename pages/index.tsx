@@ -17,7 +17,7 @@ import { useState, useEffect } from "react";
 import { Remarkable } from "remarkable";
 import NavBar from "./navbar";
 
-export default function Gen(){
+export default function Gen() {
   const [apiOutput, setApiOutput] = useState("");
   const [isGenerating, setIsGenerating] = useState(false);
   const [days, setDays] = useState([]);
@@ -168,6 +168,13 @@ export default function Gen(){
           >
             Download as .txt
           </button>
+
+          <button
+            className="inline-block rounded-lg bg-gray-400 px-4 py-1.5 text-base font-semibold leading-7 text-white shadow-sm ring-1 ring-gray-500 hover:bg-gray-500 hover:ring-gray-500"
+            onClick={() => setShowForm(true)}
+          >
+            Generate New Plan
+          </button>
         </div>
       </div>
     );
@@ -238,11 +245,11 @@ export default function Gen(){
     )}. Add warmup exercises at the beginning for 5 minutes if weights are being used.${
       pref == ""
         ? ""
-        : ". The workout plan should be take into account these preferneces: " +
+        : " The workout plan should be take into account these preferneces: " +
           pref
     }${
       pref.slice(-1) === "." ? "" : "."
-    }\nGive the number of reps and sets if appropriate. Give a detailed purpose of each workout day at the end section for that day.\n\nReturn text in markdown in the following format:\nWorkout Plan:\n## Day\n\n- *Warmup/Streching*\n- **Exercise Name**:\n...\n\n## Day ...\n\n\nWorkout Plan:`;
+    }\nGive the number of reps and sets if appropriate. Give a detailed purpose of each workout day at the end section for that day.\n\nReturn text in markdown in the following format:\nWorkout Plan:\n## Day of the week\n\n- *Warmup/Streching*\n- **Exercise Name**:\n...\n\n## Day ...\nWorkout Plan:`;
     setIsGenerating(true);
     console.log("Calling OpenAI...");
     const response = await fetch("/api/generate", {
@@ -369,7 +376,7 @@ export default function Gen(){
             <h1 className="text-4xl font-bold tracking-tight sm:text-center sm:text-6xl mb-3">
               Create your ideal workout plan in seconds
             </h1>
-            
+
             <div
               className="flex flex-col gap-8 mb-4 lg:w-4/6  md:w-5/6 sm:w-5/6
             rounded-lg bg-white shadow-md ring ring-transparent hover:ring-rose-300 p-5
@@ -583,7 +590,6 @@ export default function Gen(){
                   </div>
                 </div>
               )}
-              
 
               {currentStep == 2 && (
                 <div className="flex flex-col flex-wrap gap-4 items-center">
@@ -883,7 +889,7 @@ export default function Gen(){
 
                     <div className="p-5 sm:px-2 flex items-center flex-col  w-full mb-4 rounded-lg bg-rose-50 shadow-md ring ring-transparent hover:ring-rose-300 w-full">
                       <Markdown content={apiOutput} />
-                      {!editing && (
+                      {/* {!editing && (
                         <div className="flex gap-4 mb-4">
                           <button
                             className="inline-block rounded-lg bg-gray-400 px-4 py-1.5 text-base font-semibold leading-7 text-white shadow-sm ring-1 ring-gray-500 hover:bg-gray-500 hover:ring-gray-500"
@@ -899,7 +905,7 @@ export default function Gen(){
                             Improve Current Plan
                           </button>
                         </div>
-                      )}
+                      )} */}
 
                       {showTextArea && (
                         <div className="flex flex-col gap-5 mb-5 items-center w-full">
@@ -959,5 +965,4 @@ export default function Gen(){
       </div> */}
     </div>
   );
-};
-
+}
