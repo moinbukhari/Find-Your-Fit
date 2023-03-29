@@ -157,20 +157,20 @@ export default function Gen() {
         <div dangerouslySetInnerHTML={{ __html: html }} />
         <div className="flex flex-row gap-4">
           <button
-            className="inline-block rounded-lg bg-gray-400 px-4 py-1.5 text-base font-semibold leading-7 text-white shadow-sm ring-1 ring-gray-500 hover:bg-gray-500 hover:ring-gray-500 w-fit"
+            className="inline-block rounded-lg bg-gray-400 px-4 py-1.5 text-sm sm:text-base font-semibold leading-7 text-white shadow-sm ring-1 ring-gray-500 hover:bg-gray-500 hover:ring-gray-500 w-fit"
             onClick={() => setEditing(true)}
           >
             Edit Workout
           </button>
           <button
-            className="inline-block rounded-lg bg-gray-400 px-4 py-1.5 text-base font-semibold leading-7 text-white shadow-sm ring-1 ring-gray-500 hover:bg-gray-500 hover:ring-gray-500 w-fit"
+            className="inline-block rounded-lg bg-gray-400 px-4 py-1.5 text-sm sm:text-base font-semibold leading-7 text-white shadow-sm ring-1 ring-gray-500 hover:bg-gray-500 hover:ring-gray-500 w-fit"
             onClick={handleDownload}
           >
             Download as .txt
           </button>
 
           <button
-            className="inline-block rounded-lg bg-gray-400 px-4 py-1.5 text-base font-semibold leading-7 text-white shadow-sm ring-1 ring-gray-500 hover:bg-gray-500 hover:ring-gray-500"
+            className="inline-block rounded-lg bg-gray-400 px-4 py-1.5 text-sm sm:text-base font-semibold leading-7 text-white shadow-sm ring-1 ring-gray-500 hover:bg-gray-500 hover:ring-gray-500 w-fit"
             onClick={() => setShowForm(true)}
           >
             Generate New Plan
@@ -356,7 +356,7 @@ export default function Gen() {
             <Link
               target="_blank"
               href="https://www.buymeacoffee.com/moinbukhari"
-              className="bg-transparent hover:bg-yellow-500 text-yellow-700 font-semibold hover:text-white py-2 px-4 border border-yellow-500 hover:border-transparent rounded"
+              className="bg-transparent text-xs w-32 sm:text-base sm:w-max hover:bg-yellow-500 text-yellow-700 font-semibold hover:text-white py-2 px-4 border border-yellow-500 hover:border-transparent rounded"
             >
               Buy me a Protein Shake 🥤
             </Link>
@@ -890,7 +890,7 @@ export default function Gen() {
                       Workout Plan
                     </h3>
 
-                    <div className="p-5 sm:px-2 flex items-center flex-col w-3/4 mb-4 rounded-lg bg-rose-50 shadow-md ring ring-transparent hover:ring-rose-300">
+                    <div className="p-5 sm:px-2 flex items-center flex-col w-11/12 mb-4 rounded-lg bg-rose-50 shadow-md ring ring-transparent hover:ring-rose-300">
                       <Markdown content={apiOutput} />
                       {/* {!editing && (
                         <div className="flex gap-4 mb-4">
