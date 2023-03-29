@@ -17,7 +17,7 @@ import { useState, useEffect } from "react";
 import { Remarkable } from "remarkable";
 import NavBar from "./navbar";
 
-const Gen = () => {
+export default function Gen(){
   const [apiOutput, setApiOutput] = useState("");
   const [isGenerating, setIsGenerating] = useState(false);
   const [days, setDays] = useState([]);
@@ -27,7 +27,7 @@ const Gen = () => {
   const [pref, setPref] = useState("");
   const [comment, setComment] = useState("");
   const [email, setEmail] = useState("");
-  const [currentStep, setCurrentStep] = useState(1);
+  const [currentStep, setCurrentStep] = useState(0);
   const [editing, setEditing] = useState(false);
   const [showTextArea, setShowTextArea] = useState(false);
 
@@ -51,7 +51,7 @@ const Gen = () => {
 
   useEffect(() => {
     if (showForm) {
-      setCurrentStep(1);
+      setCurrentStep(0);
       setDays([]);
       setPref("");
       setHasGym("");
@@ -229,11 +229,20 @@ const Gen = () => {
     e.preventDefault();
     const prompt = `Generate a workout plan tailored towards ${hasGoal.join(
       ", "
-    )}. The exercises should use ${hasGym}. Make sure workouts are only 1 hour long and are only on ${days.join(
+    )}.${
+      hasGym
+        ? "I have access to gym equipment."
+        : "I don't have access to any gym equipment."
+    } Make sure workouts are only 1 hour long and are only on ${days.join(
       ", "
-    )}.The workout plan must take into account that ${pref == "" ? "" : pref}${
+    )}. Add warmup exercises at the beginning for 5 minutes if weights are being used.${
+      pref == ""
+        ? ""
+        : ". The workout plan should be take into account these preferneces: " +
+          pref
+    }${
       pref.slice(-1) === "." ? "" : "."
-    }\nIf the workout exercise uses weights add warmup exercises at the start. Give the number of reps and sets if appropriate. Give a detailed purpose of each workout day at the end of the section for the day.\n\nReturn text in markdown in the following format:\nWorkout Plan:\n## Day\n\n- **Exercise Name**:\n...\n\n## Day ...\n\n\nWorkout Plan:`;
+    }\nGive the number of reps and sets if appropriate. Give a detailed purpose of each workout day at the end section for that day.\n\nReturn text in markdown in the following format:\nWorkout Plan:\n## Day\n\n- *Warmup/Streching*\n- **Exercise Name**:\n...\n\n## Day ...\n\n\nWorkout Plan:`;
     setIsGenerating(true);
     console.log("Calling OpenAI...");
     const response = await fetch("/api/generate", {
@@ -245,7 +254,17 @@ const Gen = () => {
         prompt,
       }),
     });
-    console.log("Edge function returned.");
+
+    // const data = await response.json();
+    // const { output } = data;
+    // console.log("OpenAI replied...", output);
+
+    // setApiOutput(`${output}`);
+    // setIsGenerating(false);
+    // posthog.capture("Generated Workout");
+    // setShowForm(false);
+    // setShowTextArea(false);
+    // console.log("Edge function returned.");
 
     if (!response.ok) {
       throw new Error(response.statusText);
@@ -274,33 +293,6 @@ const Gen = () => {
     posthog.capture("Generated Workout", { Email: email });
     setShowTextArea(false);
   };
-
-  function FormDataTable({ days, gym, hasGoal }) {
-    if (gym == "Gym Equipment") {
-      gym = "Yes";
-    } else {
-      gym = "No";
-    }
-
-    return (
-      <table>
-        <tbody>
-          <tr>
-            <th>Available Days:</th>
-            <td>{days.join(", ")}</td>
-          </tr>
-          <tr>
-            <th>Gym Equipment:</th>
-            <td>{gym}</td>
-          </tr>
-          <tr>
-            <th>Goal:</th>
-            <td>{hasGoal}</td>
-          </tr>
-        </tbody>
-      </table>
-    );
-  }
 
   const handleNext = () => {
     setCurrentStep((prevStep) => prevStep + 1);
@@ -374,6 +366,10 @@ const Gen = () => {
         </div> */}
         {showForm && (
           <div className="p-8 flex items-center justify-center flex-col w-full gap-6 text-center">
+            <h1 className="text-4xl font-bold tracking-tight sm:text-center sm:text-6xl mb-3">
+              Create your ideal workout plan in seconds
+            </h1>
+            
             <div
               className="flex flex-col gap-8 mb-4 lg:w-4/6  md:w-5/6 sm:w-5/6
             rounded-lg bg-white shadow-md ring ring-transparent hover:ring-rose-300 p-5
@@ -383,6 +379,20 @@ const Gen = () => {
                 Answer the few questions below and have your workout plan
                 generated in minutes
               </h3> */}
+              {currentStep == 0 && (
+                <div className="flex flex-col flex-wrap gap-8 items-center">
+                  <p className="mt-7 text-2xl leading-8 text-gray-600 sm:text-center">
+                    Tell us your fitness goals, preferences and weekly
+                    availability.
+                  </p>
+                  <p className=" text-2xl leading-8 text-gray-600 sm:text-center">
+                    Get a personalised plan that fits your needs.
+                  </p>
+                  <button className="btn-custom" onClick={handleNext}>
+                    Let's Go
+                  </button>
+                </div>
+              )}
               {currentStep == 1 && (
                 <div className="flex flex-col flex-wrap gap-8 items-center">
                   <h3 className="text-gray-700 font-bold text-xl sm:text-2xl ">
@@ -573,6 +583,7 @@ const Gen = () => {
                   </div>
                 </div>
               )}
+              
 
               {currentStep == 2 && (
                 <div className="flex flex-col flex-wrap gap-4 items-center">
@@ -777,7 +788,7 @@ const Gen = () => {
                           ? "inline-block rounded-lg bg-rose-600 px-4 py-1.5 text-base font-semibold leading-7 text-white shadow-sm ring-1 ring-rose-600 hover:bg-rose-700 hover:ring-rose-700 opacity-70 hover:cursor-not-allowed duration-[500ms,800ms]"
                           : "inline-block rounded-lg bg-rose-600 px-4 py-1.5 text-base font-semibold leading-7 text-white shadow-sm ring-1 ring-rose-600 hover:bg-rose-700 hover:ring-rose-700"
                       }
-                      onClick={e => generateWorkout(e)}
+                      onClick={(e) => generateWorkout(e)}
                     >
                       <div className="outline-none flex flex-col justify-start flex-shrink-0 transform-none ">
                         {isGenerating ? (
@@ -950,4 +961,3 @@ const Gen = () => {
   );
 };
 
-export default Gen;

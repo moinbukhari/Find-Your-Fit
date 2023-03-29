@@ -1,20 +1,7 @@
-import { useState } from "react";
-// import { Dialog } from '@headlessui/react'
-// import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline'
-
 import NavBar from "./navbar";
-
-const navigation = [
-  { name: "Product", href: "#" },
-  { name: "Features", href: "#" },
-  { name: "Marketplace", href: "#" },
-  { name: "Company", href: "#" },
-];
 
 
 export default function Example() {
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [email, setEmail] = useState("");
   const handleEmailChange = (event) => {
     const { value } = event.target;
     setEmail(value);
