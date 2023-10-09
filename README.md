@@ -20,4 +20,9 @@ One of the key features of the application is the implementation of output strea
 
 ## Examples 
 
-![Example](https://github.com/moinbukhari/Find-Your-Fit/blob/main/assets/2023-10-09%2015_23_16-Find%20Your%20Fit.png)
+![Schedule](https://github.com/moinbukhari/Find-Your-Fit/blob/main/assets/2023-10-09%2017_23_14-Find%20Your%20Fit.png)
+![Goal](https://github.com/moinbukhari/Find-Your-Fit/blob/main/assets/2023-10-09%2017_23_55-Find%20Your%20Fit.png)
+![Gym](https://github.com/moinbukhari/Find-Your-Fit/blob/main/assets/2023-10-09%2017_24_19-Find%20Your%20Fit.png)
+![Preferences](https://github.com/moinbukhari/Find-Your-Fit/blob/main/assets/2023-10-09%2017_24_43-Find%20Your%20Fit.png)
+![Result](https://github.com/moinbukhari/Find-Your-Fit/blob/main/assets/2023-10-09%2017_25_32-Find%20Your%20Fit.png)
+
